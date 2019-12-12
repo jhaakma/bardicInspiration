@@ -8,7 +8,7 @@ local messages = require("mer.bardicInspiration.messages.messages")
 local songController = require("mer.bardicInspiration.songController")
 
 local function isLute(item)
-    return common.idSet[item.id] == true
+    return common.lutes[item.id] == true
 end
 
 local function isPlayer(ref)
@@ -41,8 +41,7 @@ local function alreadyPlayed()
 end
 
 local function weaponReadied(e)
-    local weapon = e.weaponStack.object
-    if isLute(weapon) and isPlayer(e.reference) then
+    if isLute(e.weaponStack.object) and isPlayer(e.reference) then
         if isIndoors() then
             if inTavern() then
                 if isNight() then

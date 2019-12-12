@@ -1,15 +1,5 @@
 local this = {}
-
-local Song = require("mer.bardicInspiration.Song")
-
-function this.getSongs()
-    local songs = {}
-    local config = common.getConfig()
-    for _, song in ipairs(config) do
-        table.insert(songs, Song:new(song))
-    end
-    return songs
-end
+local songList = require("mer.bardicInspiration.songList")
 
 function this.showMenu()
     local common = require("mer.bardicInspiration.common")
@@ -18,7 +8,7 @@ function this.showMenu()
     timer.delayOneFrame(function()
         local buttons = {}
         --add songs
-        for _, song in ipairs(this.getSongs()) do
+        for _, song in ipairs(songList) do
             table.insert(buttons, { text = song.name, callback = function() song:perform() end })
         end
         --add cancel button
@@ -32,7 +22,7 @@ function this.showMenu()
 end
 
 function this.playRandom()
-    table.choice(this.getSongs()):play()
+    table.choice(songList:play())
 end
 
 return this

@@ -17,13 +17,6 @@ this.configPath = "bardicInspiration"
 local defaultConfig = {
     taverns = {
         ["Balmora, Lucky Lockup"] = true
-    },
-    songs = {
-        {
-            name = messages.songs.lute1,
-            path = "Lute1.mp3",
-            buffId = "mer_bard_inspiration"
-        }
     }
 }
 local inMemConfig

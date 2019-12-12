@@ -1,7 +1,7 @@
 --[[
-    An object representing a song that can be played on a lute. 
+    An object representing a song that can be played on a lute.
     Includes functions for performing songs in a tavern or playing
-    them to get a passive buff. 
+    them to get a passive buff.
 ]]
 local common = require("mer.bardicInspiration.common")
 local Song = {
@@ -43,7 +43,7 @@ function Song:perform()
     --Start playing music
     tes3.streamMusic{ path = self.path, crossfade = 0.2 }
     event.register("musicSelectTrack", endPerformance )
-    
+
     local duration
 
     -- goldTimer = timer.start{

@@ -3,16 +3,17 @@
 ]]
 local messages = require("mer.bardicInspiration.messages.messages")
 local skillModule = include("OtherSkills.skillModule")
-local this = {
-    skills = {}
-}
-
+local this = {}
+this.skills = {}
 --Tell player if they don't have the right version of Skills Module
 local function checkVersion()
     if not skillModule then
         timer.start({
             callback = function()
-                tes3.messageBox({message = messages.skills.pleaseInstall, buttons = {tes3.findGMST(tes3.gmst.sOK).value} })
+                tes3.messageBox{
+                    message = messages.skills_warning_install,
+                    buttons = {tes3.findGMST(tes3.gmst.sOK).value}
+                }
             end,
             type = timer.simulate,
             duration = 1.0
@@ -21,7 +22,10 @@ local function checkVersion()
     if ( skillModule.version == nil ) or ( skillModule.version < 1.4 ) then
         timer.start({
             callback = function()
-                tes3.messageBox({message = messages.skills.pleaseUpdate, buttons = {tes3.findGMST(tes3.gmst.sOK).value} })
+                tes3.messageBox{
+                    message = messages.skills_warning_update,
+                    buttons = {tes3.findGMST(tes3.gmst.sOK).value}
+                }
             end,
             type = timer.simulate,
             duration = 1.0
@@ -59,15 +63,15 @@ local function checkCharGen()
         local startingSkillLevel = getStartingSkillLevel()
         skillModule.registerSkill("BardicInspiration:Performance",
             {
-                name = messages.skills.performance.name,
+                name = messages.skills_performance_name,
                 icon = "Icons/mer_bard/performSkill.dds",
                 value = startingSkillLevel,
                 attribute = tes3.attribute.personality,
-                description = messages.skills.performance.description,
+                description = messages.skills_performance_description,
                 specialization = tes3.specialization.stealth
             }
         )
-        this.skills.performance = skillModule.getSkill("BardicInspiration:Performance")
+        this.performance = skillModule.getSkill("BardicInspiration:Performance")
     end
 end
 
