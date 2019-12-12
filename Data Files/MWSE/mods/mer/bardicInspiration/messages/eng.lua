@@ -11,14 +11,22 @@ messages.mcm = {
     pages = {
         taverns = {
             name = "Taverns",
-            description = "Choose which interior cells are considered taverns, where you are able to perform with your lute",
+            description = ( 
+                "In Bardic Inspiration, you can only perform for gold at inns and taverns. " ..
+                "Use the lists below to view and edit which cells you are allowed to perform in."
+            ),
             leftList = "Tavern cells",
             rightList = "Interior cells"
         }
     }
 }
-messages.installSkills = "Please install Skills Module"
-messages.updateSkills = "Please update Skills Module"
-
+messages.skills = {
+    performance = {
+        name = "Performance",
+        description = "Determines your ability to perform with musical instruments.",
+    },
+    pleaseInstall = "Please install Skills Module",
+    pleaseUpdate = "Please update Skills Module",
+}
 
 return messages

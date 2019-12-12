@@ -1,7 +1,7 @@
 --[[
     Skills
 ]]
-local messages = require("mer.bardicInspiration.messages")
+local messages = require("mer.bardicInspiration.messages.messages")
 local skillModule = include("OtherSkills.skillModule")
 local this = {
     skills = {}

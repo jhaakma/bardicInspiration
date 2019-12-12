@@ -13,7 +13,7 @@ end
 
 function this.showMenu()
     local common = require("mer.bardicInspiration.common")
-    local messages = require("mer.bardicInspiration.messages")
+    local messages = require("mer.bardicInspiration.messages.messages")
     --delay a frame so it triggers outside menuMode
     timer.delayOneFrame(function()
         local buttons = {}

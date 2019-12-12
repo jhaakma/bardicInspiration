@@ -4,7 +4,7 @@
     or else shows a message saying which conditions aren't met.
 ]]
 local common = require("mer.bardicInspiration.common")
-local messages = require("mer.bardicInspiration.messages")
+local messages = require("mer.bardicInspiration.messages.messages")
 local songController = require("mer.bardicInspiration.songController")
 
 local function isLute(item)

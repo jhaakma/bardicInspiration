@@ -1,5 +1,5 @@
 local common = require("mer.bardicInspiration.common")
-local messages = require("mer.bardicInspiration.messages")
+local messages = require("mer.bardicInspiration.messages.messages")
 
 local function registerModConfig()
     local config = common.getConfig()
