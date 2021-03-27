@@ -5,7 +5,7 @@ end
 --Start with English in case translation is incomplete
 local messages = getMessages("eng") or {}
 -- Get the ISO language code.
-language = tes3.getLanguage()
+local language = tes3.getLanguage()
 if language ~= "eng" then
     --Copy the translation if we have one
     local translation = getMessages(language)

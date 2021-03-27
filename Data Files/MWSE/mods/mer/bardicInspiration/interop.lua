@@ -1,5 +1,6 @@
+local common = require("mer.bardicInspiration.common")
 local Song = require("mer.bardicInspiration.Song")
-local songList = require("mer.bardicInspiration.songList")
+local songList = require("mer.bardicInspiration.data.songList")
 
 local this = {}
 
@@ -14,10 +15,14 @@ local this = {}
         Default: "mer_bard_inspiration"
     difficulty (optional):
         How hard the song is to play
-        Default: 5
+        options: 'beginner', 'intermediate', 'advanced'
 ]]
 function this.addSong(data)
     assert(data.name, "No song name provided")
     assert(data.path, "No path to sound file provided")
-    table.insert(songList, Song:new(data))
+    data.difficulty = data.difficulty or 'beginner'
+    assert(common.staticData.difficulties[data.difficulty], "Invalid difficulty provided")
+    table.insert(songList[data.difficulty], Song:new(data))
 end
+
+return this
