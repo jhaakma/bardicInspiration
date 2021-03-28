@@ -96,7 +96,7 @@ local function checkLoadedLutes()
         end
     end
 end
-event.register("loaded", checkLoadedLutes)
+event.register("BardicInspiration:DataLoaded", checkLoadedLutes)
 
 
 event.register("equip", function(e)

@@ -161,11 +161,6 @@ local songList = {
             path = "mer_bard/int/15.mp3",
             difficulty = "intermediate",
         },
-        {   
-            name = "Lost in Vivec City",
-            path = "mer_bard/int/16.mp3",
-            difficulty = "intermediate",
-        },
     },
     advanced = {
         {   
@@ -195,6 +190,11 @@ local songList = {
         },
         {   
             name = "Prelude No.1",
+            path = "mer_bard/pro/6.mp3",
+            difficulty = "advanced",
+        },
+        {   
+            name = "Fantasia",
             path = "mer_bard/pro/6.mp3",
             difficulty = "advanced",
         },

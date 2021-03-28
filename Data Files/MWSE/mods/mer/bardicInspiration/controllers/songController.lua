@@ -60,7 +60,7 @@ function this.playRandom()
 end
 
 
--- event.register("loaded", function()
+-- event.register("BardicInspiration:DataLoaded", function()
 --     common.data.knownSongs = common.data.knownSongs or {}
 --     local name = "Silence"
 --     this.learnSong{   

@@ -34,7 +34,7 @@ return {
     difficulty_advanced = "Advanced",
 
     --dialog
-    dialog_teachChoice = "Yes, I may have something suitable for your skill level. The song is called \"%s\". Would you like me to teach it to you?",
+    dialog_teachChoice = "Yes, I may have something suitable for your skill level. This %s song is called \"%s\". Would you like me to teach it to you?",
     dialog_NoSongsBard = "You should actually learn to play something before you embarrass yourself in front of my patrons. %s is a bard, perhaps %s could teach you? I'm sure I saw %s around here somewhere.",
 
     --mcm

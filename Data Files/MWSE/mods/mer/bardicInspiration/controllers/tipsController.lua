@@ -6,6 +6,8 @@ local tipTimer
 local totalTips = nil
 
 --Internal Functions---------------------------------------------------
+
+
 local function calculateLuckIntervalEffect()
     --calculate luck effect
     local maxLuckEffect = common.staticData.maxLuckTipIntervalEffect
@@ -43,6 +45,11 @@ local function generateTipMessage()
     return message
 end
 
+local function calculateDifficultyTipEffect()
+    local difficulty = common.data.currentSongDifficulty or "beginner"
+    return common.staticData.difficulties[difficulty].tipMulti
+end
+
 local function calculateSkillTipEffect()
     --calculate skill effect
     local maxSkillEffect = common.staticData.maxSkillTipEffect
@@ -54,8 +61,9 @@ end
 
 local function generateTip()
     local skillEffect = calculateSkillTipEffect()
+    local difficultyEffect = calculateDifficultyTipEffect()
     --Calcaulte max tip
-    local maxTip = common.staticData.baseTip * skillEffect
+    local maxTip = common.staticData.baseTip * skillEffect * difficultyEffect
     common.log:debug("Max tip: %s gold", maxTip)
     --generate actual tip
     local tip = math.random(common.staticData.minTip, maxTip)
@@ -103,14 +111,14 @@ function this.stop()
 end
 
 function this.getTotal()
-    common.log:debug("Returning total tips of %d", totalTips)
-    return totalTips
+    common.log:debug("Returning total tips of %d", totalTips or 0)
+    return totalTips or 0
 end
 
 --Stop timer on game load
 local function clearOnLoad()
     this.stop()
 end
-event.register("loaded", clearOnLoad)
+event.register("BardicInspiration:DataLoaded", clearOnLoad)
 
 return this

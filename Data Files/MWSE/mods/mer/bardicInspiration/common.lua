@@ -27,13 +27,14 @@ do --mcm config
     })
 end
 
-do --save data
-    local function initPlayerData()
-        tes3.player.data.mer_bardicInspiration = tes3.player.data.mer_bardicInspiration or {}
-        for k, v in ipairs(this.staticData.initPlayerData) do
-            tes3.player.data.mer_bardicInspiration[k] = tes3.player.data.mer_bardicInspiration[k] or v
-        end
+--initialise player data
+local function initPlayerData()
+    tes3.player.data.mer_bardicInspiration = tes3.player.data.mer_bardicInspiration or {}
+    for k, v in pairs(this.staticData.initPlayerData) do
+        tes3.player.data.mer_bardicInspiration[k] = tes3.player.data.mer_bardicInspiration[k] or v
     end
+end
+do
     this.data = setmetatable({}, {
         __index = function(_, key)
             if tes3.player then
@@ -49,6 +50,15 @@ do --save data
         end
     })
 end
+
+local function onLoad()
+    initPlayerData()
+    --add topics
+    mwscript.addTopic{ topic = "give a performance"}
+    mwscript.addTopic{ topic = "teach me a song"}
+    event.trigger("BardicInspiration:DataLoaded")
+end
+event.register("loaded", onLoad)
 
 local logLevel = this.config.logLevel
 this.log = require("mer.bardicInspiration.logger").new{
@@ -177,14 +187,41 @@ function this.hasLute()
     return false
 end
 
-function this.stopMusic(e)
+function this.playMusic(e)
     e = e or {}
-    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = e.crossfade}
+    this.log:debug("tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
+    if tes3.worldController.audioController.volumeMusic <= 0 then
+        this.log:debug("media is <= 0, setting volume to effects volume")
+        this.data.previousMusicVolume = tes3.worldController.audioController.volumeMusic
+        tes3.worldController.audioController.volumeMusic = 0.5
+        this.log:debug("new tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
+    end
+    tes3.streamMusic{ path = e.path, crossfade = e.crossfade or 0.1 }
 end
 
+function this.stopMusic(e)
+    e = e or {}
+
+    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = e.crossfade }
+    if this.data.previousMusicVolume then
+        timer.start{
+            type = timer.real,
+            duration = e.crossfade or 0,
+            iterations = 1,
+            callback = function()
+                this.log:debug("restoring previous volume")
+                tes3.worldController.audioController.volumeMusic = this.data.previousMusicVolume
+                this.data.previousMusicVolume = nil
+            end
+        }
+    end
+end
+
+local fadingOut
 --Fades out, passes time then runs callback when finished
 function this.fadeTimeOut(e)
     local function fadeTimeIn()
+        fadingOut = nil
         tes3.runLegacyScript({command = 'EnablePlayerControls'})
         e.callback()
     end
@@ -204,6 +241,7 @@ function this.fadeTimeOut(e)
             end)
         }
     )
+    fadingOut = true
     --All the way through, fade back in
     timer.start(
         {
@@ -225,5 +263,15 @@ function this.fadeTimeOut(e)
         }
     )
 end
+
+event.register("BardicInspiration:DataLoaded", function()
+    this.log:debug("loaded")
+    if fadingOut then
+        this.log:debug("fading back in")
+        tes3.runLegacyScript({command = 'EnablePlayerControls'})
+        tes3.fadeIn({duration = 0.1})
+        fadingOut = nil
+    end
+end)
 
 return this

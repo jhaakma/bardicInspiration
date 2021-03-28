@@ -131,18 +131,27 @@ local function infoTeachConfirm(e)
         timer.delayOneFrame(function()
             local song = getSongFromBard(currentBard)
             if song then
-                tes3.streamMusic{ path = song.path, crossfade = 0.1}
+                common.playMusic{ path = song.path}
                 common.fadeTimeOut{
                     hoursPassed = 0.25,
                     secondsTaken = 10,
                     callback = function()
-                        common.stopMusic{crossfade = 2.0}
-                        tes3.messageBox{
-                            message = string.format(messages.learnedSong, song.name),
-                            buttons = { tes3.findGMST(tes3.gmst.sOK).value }
+                        common.stopMusic{ crossfade = 3.0 }
+                        timer.start{
+                            duration = 1,
+                            type = timer.real, 
+                            iterations = 1,
+                            callback = function()
+                                local msg = string.format(messages.learnedSong, song.name)
+                                tes3.messageBox{
+                                    message = msg,
+                                    buttons = { tes3.findGMST(tes3.gmst.sOK).value }
+                                }
+                                getBardData(currentBard).timeLastTaughtHour = getHoursPassed()
+                                songController.learnSong(song)
+                            end
                         }
-                        getBardData(currentBard).timeLastTaughtHour = getHoursPassed()
-                        songController.learnSong(song)
+
                     end
                 }
             end
@@ -155,7 +164,8 @@ local function infoTeachChoice(e)
     if e.passes ~= false then
         local songToLearn = getSongFromBard(currentBard)
         if songToLearn then
-            e.text = string.format(messages.dialog_teachChoice, songToLearn.name)
+            local difficultyMsg = messages['difficulty_' .. songToLearn.difficulty]
+            e.text = string.format(messages.dialog_teachChoice, difficultyMsg:lower(), songToLearn.name)
         else
             common.log:debug("infoTeachChoice(): No song to learn")
         end

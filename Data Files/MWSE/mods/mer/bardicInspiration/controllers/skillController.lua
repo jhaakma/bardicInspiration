@@ -37,18 +37,17 @@ end
 local function getStartingSkillLevel()
     local val = 10
     if tes3.player then
+        local minPersonality = 10
+        local maxPersonality = 60
+        local minVal = 1
+        local maxVal = 30
+        local personality = tes3.mobilePlayer.personality.base
+        val = math.remap(personality, minPersonality, maxPersonality, minVal, maxVal)
+        val = math.clamp(val, minVal, maxVal)
+        --make it by increments of 5
+        val = math.ceil(val / 5) * 5
         if tes3.player.object.class.id == "Bard" then
-            val = 40
-        else
-            local minPersonality = 10
-            local maxPersonality = 60
-            local minVal = 1
-            local maxVal = 30
-            local personality = tes3.mobilePlayer.personality.base
-            val = math.remap(personality, minPersonality, maxPersonality, minVal, maxVal)
-            val = math.clamp(val, minVal, maxVal)
-            --make it by increments of 5
-            val = math.ceil(val / 5) * 5
+            val = val + 15
         end
     end
     return val

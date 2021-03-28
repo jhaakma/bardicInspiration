@@ -7,16 +7,16 @@ local function onLoad()
         callback = function()
             if common.data.isPlaying then
                 local difficulty = common.data.currentSongDifficulty or "beginner"
-                local skillLevel = common.skills.performance.value
                 local difficultyMulti = common.staticData.difficulties[difficulty].expMulti
+
+                local skillLevel = common.skills.performance.value
                 local minLevelMulti = common.staticData.skillLevelMultis.min
                 local maxLevelMulti = common.staticData.skillLevelMultis.max
-            
                 local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
-            
-                common.log:debug("difficultyMulti: %s", difficultyMulti)
-                common.log:debug("skillLevelMulti: %s", skillLevelMulti)
-                common.log:debug("performSkillProgress: %s", common.staticData.performExperiencePerSecond)
+                common.log:debug("Performance experience gain")
+                common.log:trace("difficultyMulti: %s", difficultyMulti)
+                common.log:trace("skillLevelMulti: %s", skillLevelMulti)
+                common.log:trace("performSkillProgress: %s", common.staticData.performExperiencePerSecond)
             
                 local progress = difficultyMulti * skillLevelMulti * common.staticData.performExperiencePerSecond
 
@@ -24,7 +24,18 @@ local function onLoad()
                 common.skills.performance:progressSkill(progress)
                 common.log:trace("Current progress: %s", common.skills.performance.progress)
             end
+
+            if common.data.travelPlay then
+                local skillLevel = common.skills.performance.value
+                local minLevelMulti = common.staticData.skillLevelMultis.min
+                local maxLevelMulti = common.staticData.skillLevelMultis.max
+                local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
+                
+                local progress = common.staticData.travelPlayExperiencePerSecond * skillLevelMulti
+                common.skills.performance:progressSkill(progress)
+                common.log:debug("Travel play experience gained: %s", progress)
+            end
         end
     }
 end
-event.register("loaded", onLoad)
+event.register("BardicInspiration:DataLoaded", onLoad)

@@ -142,14 +142,3 @@ end
 event.register("infoFilter", filterNoLute, { filter = tes3.getDialogueInfo(infos.noLute)})
 
 
---Clear on load
-local function onLoad()
-    local data = common.data
-    if data.isPlaying then
-        common.log:debug("Resetting controls from previous load")
-        tes3.setVanityMode({ enabled = false })
-        common.enableControls()
-        data.isPlaying = nil
-    end
-end
-event.register("loaded", onLoad)

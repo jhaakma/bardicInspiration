@@ -40,6 +40,6 @@ local function onLoad()
     }
     performancesData:get()
 end
-event.register("loaded", onLoad)
+event.register("BardicInspiration:DataLoaded", onLoad)
 
 return this

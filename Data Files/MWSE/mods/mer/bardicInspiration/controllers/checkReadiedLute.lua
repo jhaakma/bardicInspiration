@@ -14,7 +14,12 @@ local function isLute(item)
 end
 
 local function inTavern()
-    return common.config.taverns[tes3.mobilePlayer.cell.id]
+    for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
+        if ref.object.class.id == "Publican" then
+            return true
+        end
+    end
+    return false
 end
 
 local function isIndoors()

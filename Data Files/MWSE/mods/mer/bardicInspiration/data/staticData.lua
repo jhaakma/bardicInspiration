@@ -16,36 +16,40 @@ return {
     },
     bardTeachIntervalHours = 48,
     difficulties = {
-        beginner = { 
+        beginner = {
             minSkill = -1,
-            expMulti = 0.5,
-            songsPerBard = 5
+            expMulti = 0.8,
+            songsPerBard = 5,
+            tipMulti = 1.0
         },
         intermediate = { 
             minSkill = 50,
-            expMulti = 0.75,
-            songsPerBard = 5
+            expMulti = 0.9,
+            songsPerBard = 5,
+            tipMulti = 3.0
         },
         advanced = { 
             minSkill = 75,
             expMulti = 1.0,
-            songsPerBard = 1
+            songsPerBard = 1,
+            tipMulti = 5.0
         }
     },
+    --experience multipliers
     skillLevelMultis = {
-        min = 6.0,
+        min = 3.0,
         max = 1.0
     },
-
+    performExperiencePerSecond = 1.0,
+    travelPlayExperiencePerSecond = 0.2,
     --Tavern reward configs
-    performExperiencePerSecond = 1.5,
     baseRewardAmount = 10,
     maxDispRewardEffect = 2.0,
     maxSkillRewardEffect = 10.0,
     --Tip configs
     minTip = 2,
     baseTip = 5,
-    maxSkillTipEffect = 5.0,
+    maxSkillTipEffect = 4.0,
     --Tip interval configs
     maxTipInterval = 30,
     baseTipInterval = 20, --seconds

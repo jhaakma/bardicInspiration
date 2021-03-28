@@ -14,13 +14,5 @@ local function initialized()
 end
 event.register("initialized", initialized)
 
-
-local function onLoad()
-    mwse.log('adding topic "give a performance"')
-    mwscript.addTopic{ topic = "give a performance"}
-    mwse.log('adding topic "teach me a song"')
-    mwscript.addTopic{ topic = "teach me a song"}
-end
-event.register("loaded", onLoad)
 --MCM
 require("mer.bardicInspiration.mcm")

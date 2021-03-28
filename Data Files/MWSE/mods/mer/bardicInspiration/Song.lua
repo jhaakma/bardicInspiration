@@ -74,6 +74,8 @@ function Song:getSkillIncrease()
     return progress
 end
 
+
+
 --Perform at a tavern, earn gold
 function Song:perform()
     animate.play()
@@ -82,8 +84,8 @@ function Song:perform()
     common.data.isPlaying = true
     --tes3.fadeOut{ duration = 5 }
     --Start playing music
+    common.playMusic{ path = self.path }
     
-    tes3.streamMusic{ path = self.path, crossfade = 0.1 }
     --Ends performance when the song ends (and another track is selected):
     
     event.register("musicSelectTrack", endPerformance)
@@ -102,19 +104,21 @@ function Song:play()
         event.unregister("equip", endPlay )
         event.unregister("cellChanged", checkCell)
         event.unregister("weaponUnreadied", endPlay )
+        common.data.travelPlay = nil
         common.stopMusic()
         mwscript.removeSpell{ reference = tes3.player, spell = self.buffId }
-        for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
-            mwscript.removeSpell{ reference = actor, spell = self.buffId }
-        end
+        -- for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
+        --     mwscript.removeSpell{ reference = actor, spell = self.buffId }
+        -- end
     end
     common.log:debug("playing song at path %s", self.path)
     tes3.messageBox(messages.playingSong, self.name)
-    tes3.streamMusic{ path = self.path, crossfade = 0.2 }
+    common.playMusic{ path = self.path, crossfade = 0.2 }
+    common.data.travelPlay = true
     mwscript.addSpell{ reference = tes3.player, spell = self.buffId }
-    for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
-        mwscript.addSpell{ reference = actor, spell = self.buffId }
-    end
+    -- for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
+    --     mwscript.addSpell{ reference = actor, spell = self.buffId }
+    -- end
     event.register("musicSelectTrack", endPlay )
     event.register("equip", endPlay )
     event.register("cellChanged", checkCell)
@@ -123,7 +127,12 @@ end
 
 local function clearOnLoad()
     event.unregister("musicSelectTrack", endPerformance )
+    --Clear on load
+
+    if common.data.isPlaying then
+        endPerformance()
+    end
 end
-event.register("loaded", clearOnLoad)
+event.register("BardicInspiration:DataLoaded", clearOnLoad)
 
 return Song
