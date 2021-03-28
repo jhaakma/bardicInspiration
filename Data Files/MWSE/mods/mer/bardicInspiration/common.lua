@@ -193,28 +193,30 @@ function this.playMusic(e)
     if tes3.worldController.audioController.volumeMusic <= 0 then
         this.log:debug("media is <= 0, setting volume to effects volume")
         this.data.previousMusicVolume = tes3.worldController.audioController.volumeMusic
-        tes3.worldController.audioController.volumeMusic = 0.5
+        tes3.worldController.audioController.volumeMusic = 0.8
         this.log:debug("new tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
     end
     tes3.streamMusic{ path = e.path, crossfade = e.crossfade or 0.1 }
 end
 
-function this.stopMusic(e)
-    e = e or {}
-
-    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = e.crossfade }
+function this.restoreMusic()
     if this.data.previousMusicVolume then
-        timer.start{
-            type = timer.real,
-            duration = e.crossfade or 0,
-            iterations = 1,
-            callback = function()
-                this.log:debug("restoring previous volume")
-                tes3.worldController.audioController.volumeMusic = this.data.previousMusicVolume
-                this.data.previousMusicVolume = nil
-            end
-        }
+        this.log:debug("restoring previous volume")
+        tes3.worldController.audioController.volumeMusic = this.data.previousMusicVolume
+        this.data.previousMusicVolume = nil
     end
+end
+
+function this.stopMusic(e)
+    this.log:debug("Stopping music")
+    e = e or {}
+    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = e.crossfade }
+    timer.start{
+        type = timer.real,
+        duration = e.crossfade or 0,
+        iterations = 1,
+        callback = this.restoreMusic
+    }
 end
 
 local fadingOut

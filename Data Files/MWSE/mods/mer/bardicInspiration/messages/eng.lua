@@ -8,11 +8,6 @@ return {
     
     --General
     modName = "Bardic Inspiration",
-    he = "he",
-    him = "him",
-    
-    she = "she",
-    her = "her",
 
     --performances
     notTavern = "Find a tavern in order to perform.",
@@ -35,7 +30,8 @@ return {
 
     --dialog
     dialog_teachChoice = "Yes, I may have something suitable for your skill level. This %s song is called \"%s\". Would you like me to teach it to you?",
-    dialog_NoSongsBard = "You should actually learn to play something before you embarrass yourself in front of my patrons. %s is a bard, perhaps %s could teach you? I'm sure I saw %s around here somewhere.",
+    dialog_NoSongsBardMale = "You should actually learn to play something before you embarrass yourself in front of my patrons. %s is a bard, perhaps he could teach you? I'm sure I saw him around here somewhere.",
+    dialog_NoSongsBardFemale = "You should actually learn to play something before you embarrass yourself in front of my patrons. %s is a bard, perhaps she could teach you? I'm sure I saw her around here somewhere.",
 
     --mcm
     mcm_page_settings = "Settings",

@@ -30,7 +30,7 @@ function this.getKnownSongs()
     common.log:debug("getKnownSongs()")
     local songs = {}
     for _, songData in ipairs(common.data.knownSongs) do
-        common.log:debug("getting song %s", songData.name)
+        common.log:trace("getting song %s", songData.name)
         if lfs.attributes("Data Files/Music/" .. songData.path) then
             table.insert(songs, Song:new(songData))
         else

@@ -13,7 +13,7 @@ local function onLoad()
                 local minLevelMulti = common.staticData.skillLevelMultis.min
                 local maxLevelMulti = common.staticData.skillLevelMultis.max
                 local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
-                common.log:debug("Performance experience gain")
+                common.log:trace("Performance experience gain")
                 common.log:trace("difficultyMulti: %s", difficultyMulti)
                 common.log:trace("skillLevelMulti: %s", skillLevelMulti)
                 common.log:trace("performSkillProgress: %s", common.staticData.performExperiencePerSecond)
@@ -33,7 +33,7 @@ local function onLoad()
                 
                 local progress = common.staticData.travelPlayExperiencePerSecond * skillLevelMulti
                 common.skills.performance:progressSkill(progress)
-                common.log:debug("Travel play experience gained: %s", progress)
+                common.log:trace("Travel play experience gained: %s", progress)
             end
         end
     }

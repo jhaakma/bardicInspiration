@@ -10,7 +10,7 @@ local infos = common.staticData.dialogueEntries
 --INFOS---------------------
 
 local function infoGetReward(e)
-    common.log:debug("---infoGetReward - reward and reset")
+    common.log:trace("---infoGetReward - reward and reset")
     local thisPerformance = performances.getCurrent()
     local amount = thisPerformance.reward
     reward.give(amount)
@@ -23,7 +23,7 @@ event.register("infoGetText", infoGetReward, {filter = tes3.getDialogueInfo(info
 local currentPublican
 local function showDoAccept(e)--Schedule a performance
     if e.passes ~= false then
-        common.log:debug("passes, setting performance data")
+        common.log:trace("passes, setting performance data")
         performances.add{ 
             day = tes3.worldController.daysPassed.value, 
             state = STATE.SCHEDULED,
@@ -37,14 +37,13 @@ event.register("infoGetText", showDoAccept, { filter = tes3.getDialogueInfo(info
 
 local function showNoSongs(e)
     if e.passes ~= false then
+        -- If there is a bard in the cell, the publican will point them out to you.
         for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
-            if ref.object.class.id == "Bard" then
-                e.text = string.format(
-                    messages.dialog_NoSongsBard,
-                    ref.object.name,
-                    ( ref.object.female and messages.she or messages.he ),
-                    ( ref.object.female and messages.her or messages.him )
-                )
+            if ref.object.class.id == "Bard" and not ref.disabled then
+                local message = ref.object.female 
+                    and messages.dialog_NoSongsBardFemale 
+                    or messages.dialog_NoSongsBardMale 
+                e.text = string.format(message, ref.object.name)
             end
         end
     end
@@ -54,7 +53,7 @@ event.register("infoGetText", showNoSongs, { filter = tes3.getDialogueInfo(infos
 
 local function infoGetReward(e)
     if e.passes ~= false then
-        common.log:debug("---infoGetReward - reward and reset")
+        common.log:trace("---infoGetReward - reward and reset")
         local thisPerformance = performances.getCurrent()
         if not thisPerformance then return end
         local amount = thisPerformance.reward
@@ -69,36 +68,36 @@ event.register("infoGetText", infoGetReward, {filter = tes3.getDialogueInfo(info
 ---FILTERS-----------------
 
 local function filterHasPlayed(e)--"Thanks for playing! Here's your payment"
-    common.log:debug("---filterHasPlayed")
+    common.log:trace("---filterHasPlayed")
 
     local thisPerformance = performances.getCurrent()
     if not thisPerformance then
-        common.log:debug("No performance here, blocking")
+        common.log:trace("No performance here, blocking")
         e.passes = false
         return
     end
     local hasPlayedAlready = thisPerformance.state == STATE.PLAYED
     if not hasPlayedAlready then
-        common.log:debug("Hasn't played yet, blocking")
+        common.log:trace("Hasn't played yet, blocking")
         e.passes = false     
     end
 end
 event.register("infoFilter", filterHasPlayed, { filter = tes3.getDialogueInfo(infos.hasPlayed) })
 
 local function filterhasAccepted(e)
-    common.log:debug("---filterhasAccepted")
+    common.log:trace("---filterhasAccepted")
     local thisPerformance = performances.getCurrent()
 
     local isScheduled = thisPerformance and thisPerformance.state == STATE.SCHEDULED
     if not isScheduled then
-        common.log:debug("State is not scheduled, blocking event")
+        common.log:trace("State is not scheduled, blocking event")
         e.passes = false
         return
     end
 
     local isToday = thisPerformance and thisPerformance.day == tes3.worldController.daysPassed.value
     if not isToday then
-        common.log:debug("Performance is not today, blocking event")
+        common.log:trace("Performance is not today, blocking event")
         e.passes = false
         return
     end
@@ -107,7 +106,7 @@ event.register("infoFilter", filterhasAccepted, { filter = tes3.getDialogueInfo(
 
 
 local function filterDescribeGig(e)
-    common.log:debug("---filterDescribeGig")
+    common.log:trace("---filterDescribeGig")
     reward.calculate(e.reference.object)
     currentPublican = e.reference.object
 end
@@ -115,27 +114,27 @@ event.register("infoFilter", filterDescribeGig, { filter = tes3.getDialogueInfo(
 
 
 local function filterAskToPerform(e)
-    common.log:debug("---filterAskToPerform")
+    common.log:trace("---filterAskToPerform")
     if #common.data.knownSongs == 0 or not common.hasLute() then 
-        common.log:debug("No lute, blocking")
+        common.log:trace("No lute, blocking")
         e.passes = false 
     end
 end
 event.register("infoFilter", filterAskToPerform, { filter = tes3.getDialogueInfo(infos.askToPerform)})
 
 local function filterTooLate(e)
-    common.log:debug("---filterTooLate")
+    common.log:trace("---filterTooLate")
     if #common.data.knownSongs == 0 or not common.hasLute() then 
-        common.log:debug("No lute or songs, blocking")
+        common.log:trace("No lute or songs, blocking")
         e.passes = false 
     end
 end
 event.register("infoFilter", filterTooLate, { filter = tes3.getDialogueInfo(infos.tooLate)})
 
 local function filterNoLute(e)
-    common.log:debug("---filterNoLute")
+    common.log:trace("---filterNoLute")
     if common.hasLute() then 
-        common.log:debug("No lute, blocking")
+        common.log:trace("No lute, blocking")
         e.passes = false 
     end
 end

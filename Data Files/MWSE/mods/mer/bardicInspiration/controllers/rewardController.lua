@@ -7,7 +7,7 @@ local function calculateDispositionEffect(publican)
     local maxDispEffect = common.staticData.maxDispRewardEffect
     local disposition = publican.disposition or 50
     local dispEffect = math.remap(disposition, 0, 100, 1.0, maxDispEffect)
-    common.log:debug("disp: %s effect: %s", disposition, dispEffect)
+    common.log:trace("disp: %s effect: %s", disposition, dispEffect)
     return dispEffect
 end
 
@@ -16,7 +16,7 @@ local function calculateSkillEffect()
     local maxSkill = common.staticData.maxSkillRewardEffect
     local skill = common.skills.performance.value
     local skillEffect = math.remap(skill, 0, 100, 1.0, maxSkill)
-    common.log:debug("skill: %s, Effect effect: %s", skill, skillEffect)
+    common.log:trace("skill: %s, Effect effect: %s", skill, skillEffect)
     return skillEffect
 end
 
@@ -57,7 +57,6 @@ function this.raiseDisposition(e)
     )
     common.log:debug("Increasing %s's disposition by %s", e.actorId, dispIncrease)
     local command = string.format('modDisposition %d', dispIncrease)
-    common.log:debug("command: %s", command)
     tes3.runLegacyScript{ reference = e.actorId, command = command }
 end
 

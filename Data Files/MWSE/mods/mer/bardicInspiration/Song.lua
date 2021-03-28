@@ -23,13 +23,13 @@ function Song:new(songData)
 end
 
 local function endPerformance()
+    common.log:debug("Ending performance")
+    common.restoreMusic()
+    --unregister our events
+    event.unregister("musicSelectTrack", endPerformance)
     timer.delayOneFrame(function()
         local song = common.data.isPlaying
         if not song then return end
-        --tes3.fadeIn{ duration = 1 }
-        --unregister our events
-        event.unregister("musicSelectTrack", endPerformance)
-
         
         --Set status to played
         local currentPerformance = performances.getCurrent()
