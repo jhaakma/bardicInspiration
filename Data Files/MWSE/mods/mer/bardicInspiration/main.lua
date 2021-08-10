@@ -1,9 +1,9 @@
 local function initialized()
     if tes3.isModActive("BardicInspiration.esp") then
         --Deals with replacing vanilla lutes with playable ones
-        require("mer.bardicInspiration.controllers.switchLutes")
+        require("mer.bardicInspiration.controllers.luteController")
         --Checks when the player readies a lute and triggers performances
-        require("mer.bardicInspiration.controllers.checkReadiedLute")
+        require("mer.bardicInspiration.controllers.lutePlayController")
         --Manage performance skill
         require("mer.bardicInspiration.controllers.skillController")
         require("mer.bardicInspiration.controllers.experienceController")

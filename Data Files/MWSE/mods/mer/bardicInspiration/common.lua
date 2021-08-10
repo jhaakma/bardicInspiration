@@ -4,7 +4,7 @@ local this = {}
 this.staticData = require("mer.bardicInspiration.data.staticData")
 this.modName = this.staticData.modName
 this.skills = require("mer.bardicInspiration.controllers.skillController").skills
-
+this.messageBox = require("mer.bardicInspiration.messageBox")
 
 do --mcm config
     local inMemConfig
@@ -67,78 +67,17 @@ this.log = require("mer.bardicInspiration.logger").new{
     logLevel = logLevel
 }
 
+function this.isLute(item)
+    return item and this.staticData.lutes[item.id] == true
+end
 
-local messageBoxId = tes3ui.registerID("CustomMessageBox")
-function this.messageBox(params)
-    --[[
-        button = 
-    ]]--
-    local message = params.message
-    local buttons = params.buttons
-    local sideBySide = params.sideBySide
-
-    local menu = tes3ui.createMenu{ id = messageBoxId, fixedFrame = true }
-    menu:getContentElement().childAlignX = 0.5
-    tes3ui.enterMenuMode(messageBoxId)
-    local title = menu:createLabel{id = tes3ui.registerID("BardicInspiration:MessageBox_Title"), text = message}
-
-    local buttonsBlock = menu:createBlock()
-    buttonsBlock.borderTop = 4
-    buttonsBlock.autoHeight = true
-    buttonsBlock.autoWidth = true
-    if sideBySide then
-        buttonsBlock.flowDirection = "left_to_right"
-    else
-        buttonsBlock.flowDirection = "top_to_bottom"
-        buttonsBlock.childAlignX = 0.5
-    end 
-    for i, data in ipairs(buttons) do
-        local doAddButton = true
-        if data.showRequirements then
-            if data.showRequirements() ~= true then
-                doAddButton = false
-            end
-        end
-        if doAddButton then
-            --If last button is a Cancel (no callback), register it for Right Click Menu Exit
-            local buttonId = tes3ui.registerID("CustomMessageBox_Button")
-            if data.doesCancel then
-                buttonId = tes3ui.registerID("CustomMessageBox_CancelButton")
-            end
-
-            local button = buttonsBlock:createButton{ id = buttonId, text = data.text}
-
-            local disabled = false
-            if data.requirements then
-                if data.requirements() ~= true then
-                    disabled = true
-                end
-            end
-
-            if disabled then
-                button.widget.state = 2
-            else
-                button:register( "mouseClick", function()
-                    if data.callback then
-                        data.callback()
-                    end
-                    tes3ui.leaveMenuMode()
-                    menu:destroy()
-                end)
-            end
-
-            if not disabled and data.tooltip then
-                button:register( "help", function()
-                    this.createTooltip(data.tooltip)
-                end)
-            elseif disabled and data.tooltipDisabled then
-                button:register( "help", function()
-                    this.createTooltip(data.tooltipDisabled)
-                end)
-            end
-        end
+function this.isInnkeeper(ref)
+    local id = ref.baseObject.id:lower()
+    if ref.object.class.id == "Publican" or this.config.innkeepers[id] then
+        return true
     end
 end
+
 
 function this.shuffle(tbl)
     for i = #tbl, 2, -1 do
@@ -148,20 +87,7 @@ function this.shuffle(tbl)
     return tbl
 end
 
-function this.sortSongListByDifficulty(e)
-    table.sort(e.list, function(songA, songB)
-        local sorter = {
-            beginner = 1,
-            intermediate = 2,
-            advanced = 3
-        }
-        if e.reverse then
-            return sorter[songA.difficulty]>sorter[songB.difficulty]
-        else
-            return sorter[songA.difficulty]<sorter[songB.difficulty]
-        end
-    end)
-end
+
 
 local function setControlsDisabled(state)
     tes3.mobilePlayer.controlsDisabled = state
@@ -190,13 +116,14 @@ end
 function this.playMusic(e)
     e = e or {}
     this.log:debug("tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
+    tes3.streamMusic{ path = e.path, crossfade = e.crossfade or 0.1 }
     if tes3.worldController.audioController.volumeMusic <= 0 then
         this.log:debug("media is <= 0, setting volume to effects volume")
         this.data.previousMusicVolume = tes3.worldController.audioController.volumeMusic
         tes3.worldController.audioController.volumeMusic = 0.8
         this.log:debug("new tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
     end
-    tes3.streamMusic{ path = e.path, crossfade = e.crossfade or 0.1 }
+    
 end
 
 function this.restoreMusic()
@@ -210,10 +137,11 @@ end
 function this.stopMusic(e)
     this.log:debug("Stopping music")
     e = e or {}
-    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = e.crossfade }
+    local crossfade = e.crossfade or 0.5
+    tes3.streamMusic{ path = "mer_bard/silence.mp3", crossfade = crossfade }
     timer.start{
         type = timer.real,
-        duration = e.crossfade or 0,
+        duration = crossfade,
         iterations = 1,
         callback = this.restoreMusic
     }
@@ -265,6 +193,20 @@ function this.fadeTimeOut(e)
         }
     )
 end
+
+--sorters
+this.songSorter = function(songA, songB)
+    local nameA = songA.name:lower()
+    local nameB = songB.name:lower()
+    if string.startswith(nameA, "the") then
+        nameA = string.sub(nameA, 5)
+    end
+    if string.startswith(nameB, "the") then
+        nameB = string.sub(nameB, 5)
+    end
+    return nameA < nameB
+end
+
 
 event.register("BardicInspiration:DataLoaded", function()
     this.log:debug("loaded")

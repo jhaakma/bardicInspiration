@@ -5,7 +5,7 @@ local messages = require("mer.bardicInspiration.messages.messages")
 local songList = {
     beginner = {
         {   
-            name = "Good Greef",
+            name = "Sujamma Nights",
             path = "mer_bard/beg/1.mp3",
             difficulty = "beginner",
         },
@@ -15,7 +15,7 @@ local songList = {
             difficulty = "beginner",
         },
         {   
-            name = "The Legion March",
+            name = "Legion March",
             path = "mer_bard/beg/3.mp3",
             difficulty = "beginner",
         },
@@ -122,7 +122,7 @@ local songList = {
             difficulty = "intermediate",
         },
         {   
-            name = "The Imperial Stallion",
+            name = "Imperial Stallion",
             path = "mer_bard/int/8.mp3",
             difficulty = "intermediate",
         },
@@ -137,7 +137,7 @@ local songList = {
             difficulty = "intermediate",
         },
         {   
-            name = "The Kwama Hive",
+            name = "Kwama Hive",
             path = "mer_bard/int/11.mp3",
             difficulty = "intermediate",
         },
@@ -164,17 +164,17 @@ local songList = {
     },
     advanced = {
         {   
-            name = "Allemande",
+            name = "Clockwork City",
             path = "mer_bard/pro/1.mp3",
             difficulty = "advanced",
         },
         {   
-            name = "Courante",
+            name = "The Warrior Poet",
             path = "mer_bard/pro/2.mp3",
             difficulty = "advanced",
         },
         {   
-            name = "Sarabande",
+            name = "Ash Fall",
             path = "mer_bard/pro/3.mp3",
             difficulty = "advanced",
         },
@@ -184,7 +184,7 @@ local songList = {
             difficulty = "advanced",
         },
         {   
-            name = "Prelude No.3",
+            name = "Falling Ash",
             path = "mer_bard/pro/5.mp3",
             difficulty = "advanced",
         },

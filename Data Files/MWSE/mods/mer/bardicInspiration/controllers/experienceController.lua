@@ -5,7 +5,7 @@ local function onLoad()
         type = timer.simulate,
         iterations = -1,
         callback = function()
-            if common.data.isPlaying then
+            if common.data.songPlaying then
                 local difficulty = common.data.currentSongDifficulty or "beginner"
                 local difficultyMulti = common.staticData.difficulties[difficulty].expMulti
 

@@ -27,13 +27,32 @@ local function attachPlayLute(e)
     end
 end
 
+
+
+local function isHumanoid(obj)
+    local humanoidRaces = {
+        ['dark elf'] = true,
+        ['high elf'] = true,
+        ['breton'] = true,
+        ['wood elf'] = true,
+        ['redguard'] = true,
+        ['orc'] = true,
+        ['nord'] = true,
+        ['imperial'] = true
+    }
+    return obj and obj.race and humanoidRaces[obj.race.id:lower()]
+end
+
 function this.play()
     --Vanity mode, disable controls
     tes3.setVanityMode({ enabled = true })
     common.disableControls()
-    if mesh then
+    if mesh and isHumanoid(tes3.player.object) then
         common.data.previousAnimationMesh = tes3.player.object.mesh
-        local heldItem = tes3.getEquippedItem{ actor = tes3.player, objectType = tes3.objectType.weapon}
+        local heldItem = tes3.getEquippedItem{ 
+            actor = tes3.player, 
+            objectType = tes3.objectType.weapon
+        }
         common.data.heldLute = heldItem and heldItem.object.id
         common.log:debug("Held lute: %s", common.data.heldLute)
         tes3.playAnimation({
@@ -50,7 +69,7 @@ function this.play()
 end
 
 function this.stop()
-    if mesh and common.data.previousAnimationMesh then
+    if common.data.previousAnimationMesh and isHumanoid(tes3.player.object) then
         tes3.playAnimation({
             reference = tes3.player,
             mesh = common.data.previousAnimationMesh,
@@ -63,18 +82,20 @@ function this.stop()
         attachPlayLute{remove = true}
         mwscript.equip{ reference = tes3.player, item = common.data.heldLute }
         common.data.heldLute = nil
-
     end
     tes3.setVanityMode({ enabled = false })
     common.enableControls()
     event.unregister("keyUp", onTabUp, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
     event.unregister("keyDown", onTabDown, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
-end
+
+ end
+
 
 local function clearEventsOnLoad()
     event.unregister("keyUp", onTabUp, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
     event.unregister("keyDown", onTabDown, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
 end
 event.register("BardicInspiration:DataLoaded", clearEventsOnLoad)
+
 
 return this

@@ -20,6 +20,20 @@ local function knowsSong(song)
     return false
 end
 
+local function getPlayerDifficultyLevel()
+    local difficultyOrder = { "intermediate", "advanced"}
+    local playerSkill = common.skills.performance.value
+    local playerDifficultyLevel = "beginner"
+    for _, diffId in ipairs(difficultyOrder) do
+        local difficulty = common.staticData.difficulties[diffId]
+        local minSkill = difficulty.minSkill
+        if playerSkill >= minSkill then
+            playerDifficultyLevel = diffId
+        end
+    end
+    return playerDifficultyLevel
+end
+
 local function hasSkillsToLearn(song)
     local minSkill = common.staticData.difficulties[song.difficulty].minSkill
     local playerSkill = common.skills.performance.value
@@ -94,14 +108,29 @@ local function getBardData(bard)
 end
 
 local function bardReadyToTeach(bard)
-    local now = getHoursPassed()
+    -- local now = getHoursPassed()
+    -- local data = getBardData(bard)
+    -- if data then
+    --     local timeLastTaughtHour = data.timeLastTaughtHour or -1000
+    --     local interval = common.staticData.bardTeachIntervalHours
+
+    --     return timeLastTaughtHour + interval < now
+    -- end
+    -- return false
+
     local data = getBardData(bard)
     if data then
-        local timeLastTaughtHour = data.timeLastTaughtHour or -1000
-        local interval = common.staticData.bardTeachIntervalHours
-
-        return timeLastTaughtHour + interval < now
+        local playerSong = songController.getPlayerSong(data.lastTaughtSongName)
+        if playerSong then
+            common.log:debug(playerSong)
+            if playerSong.timesPlayed >= common.staticData.bardTeachSongPlayedMin then
+                return true
+            end
+            return false
+        end
+        return true
     end
+    return true
 end
 
 
@@ -113,15 +142,17 @@ local function getSongFromBard(bard)
         return bardData.currentSong
     else
         --sort from most to least difficult
-        common.sortSongListByDifficulty{list = bardData.songs, reverse = true}
+        songController.sortSongListByDifficulty{list = bardData.songs, reverse = true}
+        local currentSong
         for _, song in ipairs(bardData.songs) do
             if canLearnSong(song) then
                 common.log:debug("Bard will now teach %s", song.name)
-                bardData.currentSong = song
+                song.taughtBy = bard.object.name
+                currentSong = song
                 break
             end
         end
-        return bardData.currentSong
+        return currentSong
     end
 end
 
@@ -148,6 +179,7 @@ local function infoTeachConfirm(e)
                                     buttons = { tes3.findGMST(tes3.gmst.sOK).value }
                                 }
                                 getBardData(currentBard).timeLastTaughtHour = getHoursPassed()
+                                getBardData(currentBard).lastTaughtSongName = song.name
                                 songController.learnSong(song)
                             end
                         }
@@ -162,10 +194,29 @@ event.register("infoGetText", infoTeachConfirm, {filter = tes3.getDialogueInfo(i
 
 local function infoTeachChoice(e)
     if e.passes ~= false then
+        local playerDifficultyLevel = getPlayerDifficultyLevel()
+
+
         local songToLearn = getSongFromBard(currentBard)
         if songToLearn then
-            local difficultyMsg = messages['difficulty_' .. songToLearn.difficulty]
-            e.text = string.format(messages.dialog_teachChoice, difficultyMsg:lower(), songToLearn.name)
+            getBardData(currentBard).currentSong = songToLearn
+            local message
+            local difficultyMsg = messages['difficulty_' .. songToLearn.difficulty]:lower()
+            local playerDifficultyMsg = messages["difficulty_" .. playerDifficultyLevel]:lower()
+            if songToLearn.difficulty ~= playerDifficultyLevel then
+                --Bard has a song to teach but it is beneath the player's level
+                message = messages.dialog_teachChoice_lesser
+                e.text = string.format(message, playerDifficultyMsg, difficultyMsg, songToLearn.name)
+            elseif playerDifficultyLevel == "advanced" then
+                --Bard has an advanced song to teach
+                message = messages.dialog_teachChoice_advanced
+                e.text = string.format(message, tes3.player.object.name, songToLearn.name)
+            else
+                --Bard has a song matching the player's level, not advanced
+                message = messages.dialog_teachChoice
+                e.text = string.format(message, difficultyMsg, songToLearn.name)
+            end
+            
         else
             common.log:debug("infoTeachChoice(): No song to learn")
         end
@@ -213,3 +264,15 @@ local function filterNoTeachLowSkill(e)
     end
 end
 event.register("infoFilter", filterNoTeachLowSkill, { filter = tes3.getDialogueInfo(infos.noTeachLowSkill)})
+
+local function filterNoTeachNoSongs(e)
+    if not isBard(e.reference) then return end
+    common.log:debug("---filterNoTeachNoSongs")
+    currentBard = e.reference
+    local songToLearn = getSongFromBard(currentBard)
+    if songToLearn and not knowsSong(songToLearn) then 
+        e.passes = false
+    end
+end
+event.register("infoFilter", filterNoTeachNoSongs, { filter = tes3.getDialogueInfo(infos.noTeachNoSongs)})
+

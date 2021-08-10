@@ -15,6 +15,7 @@ return {
         knownSongs = {}
     },
     bardTeachIntervalHours = 48,
+    bardTeachSongPlayedMin = 1,
     difficulties = {
         beginner = {
             minSkill = -1,
@@ -29,7 +30,7 @@ return {
             tipMulti = 3.0
         },
         advanced = { 
-            minSkill = 75,
+            minSkill = 70,
             expMulti = 1.0,
             songsPerBard = 1,
             tipMulti = 5.0
