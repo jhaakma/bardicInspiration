@@ -144,6 +144,7 @@ function Song:play()
     -- end
     event.register("musicSelectTrack", endPlay )
     event.register("equip", endPlay )
+    event.register("unequipped", endPlay )
     event.register("cellChanged", checkCell)
     event.register("weaponUnreadied", endPlay )
 end
