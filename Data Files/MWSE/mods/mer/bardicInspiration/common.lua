@@ -86,7 +86,7 @@ end
 
 function this.isInnkeeper(ref)
     local id = ref.baseObject.id:lower()
-    if (ref.object.class and ref.object.class.id == "Publican") or this.config.innkeepers[id] then
+    if (ref.object.class and this.staticData.publicanClasses[ref.object.class.id:lower()]) or this.config.innkeepers[id] then
         return true
     end
 end

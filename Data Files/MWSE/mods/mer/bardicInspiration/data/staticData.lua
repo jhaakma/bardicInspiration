@@ -6,6 +6,7 @@ return {
     containerContents = {
         { item = "mer_lute", count = 1},
     },
+
     --Lute id mapping
     lutes = {
         ["mer_lute"] = true,
@@ -18,6 +19,11 @@ return {
     initPlayerData = {
         taverns = {},
         knownSongs = {}
+    },
+    publicanClasses = {
+        publican = true,
+        t_sky_publican = true,
+        t_cyr_publican = true
     },
     bardTeachIntervalHours = 48,
     bardTeachSongPlayedMin = 1,
