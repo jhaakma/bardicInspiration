@@ -61,16 +61,18 @@ end
 
 local function translateFloorLute(ref)
     local node = ref.sceneNode:getObjectByName("MER_LUTE")
-    common.log:debug("translating floor sceneNode")
-    node.translation.x = -3.5
-    node.translation.y = 4.9
-    node.translation.z = 6.0
-    common.log:debug("rotating floor sceneNode")
-    local rot = tes3matrix33.new()
-    rot:fromEulerXYZ(math.rad(4), math.rad(89), math.rad(0))
-    node.rotation = rot
+    if node then
+        common.log:debug("translating floor sceneNode")
+        node.translation.x = -3.5
+        node.translation.y = 4.9
+        node.translation.z = 6.0
+        common.log:debug("rotating floor sceneNode")
+        local rot = tes3matrix33.new()
+        rot:fromEulerXYZ(math.rad(4), math.rad(89), math.rad(0))
+        node.rotation = rot
 
-    node.scale = 1.07
+        node.scale = 1.07
+    end
 end
 
 --[[
@@ -91,7 +93,7 @@ end
 event.register("referenceSceneNodeCreated", switchPlacedLute)
 
 --[[
-    referenceSceneNodeCreated may not be triggered on load, so 
+    referenceSceneNodeCreated may not be triggered on load, so
     iterate references manually
 ]]
 local function checkLoadedLutes()

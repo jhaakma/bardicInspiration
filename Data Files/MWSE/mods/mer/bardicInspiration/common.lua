@@ -67,13 +67,26 @@ this.log = require("mer.bardicInspiration.logger").new{
     logLevel = logLevel
 }
 
-function this.isLute(item)
-    return item and this.staticData.lutes[item.id] == true
+function this.isLute(item, itemData)
+    if item then
+        if this.staticData.lutes[item.id] then
+            return true
+        end
+        --Check "Constistent Enchanting" stored ID
+        if itemData and itemData.data then
+            this.log:debug("Found itemData when checking lute")
+            if this.staticData.lutes[itemData.data.ncceEnchantedFrom] then
+                return true
+            end
+        end
+    end
+
+    return false
 end
 
 function this.isInnkeeper(ref)
     local id = ref.baseObject.id:lower()
-    if ref.object.class.id == "Publican" or this.config.innkeepers[id] then
+    if (ref.object.clas and ref.object.class.id == "Publican") or this.config.innkeepers[id] then
         return true
     end
 end
@@ -123,7 +136,7 @@ function this.playMusic(e)
         tes3.worldController.audioController.volumeMusic = 0.8
         this.log:debug("new tes3.worldController.audioController.volumeMusic: %s", tes3.worldController.audioController.volumeMusic)
     end
-    
+
 end
 
 function this.restoreMusic()

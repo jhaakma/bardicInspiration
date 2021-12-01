@@ -41,20 +41,21 @@ local function doSkip()
     return currentPerformance and currentPerformance.state == performances.STATE.SKIP
 end
 
+---@param e weaponReadiedEventData
 local function onReadyLute(e)
     if not common.config.enabled then return end
     if not e.weaponStack then return end
     if not (e.reference == tes3.player) then return end
-    if not common.isLute(e.weaponStack.object) then return end
+    if not common.isLute(e.weaponStack.object, e.weaponStack.itemData) then return end
     if not isIndoors() then
         --Play while travelling
         songController.playRandom()
         return
     end
 
-    if common.data.songPlaying then 
+    if common.data.songPlaying then
         --already playing!
-        return 
+        return
     end
     if not inTavern() then
         tes3.messageBox(messages.notTavern)
@@ -78,7 +79,7 @@ local function onReadyLute(e)
 
     if doSkip() then
         return
-    end 
+    end
 
     --Perform at tavern
     songController.showMenu()

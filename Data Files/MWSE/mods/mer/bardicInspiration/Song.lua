@@ -27,13 +27,13 @@ end
 local function endPerformance()
 
     if not common.data.songPlaying then return end
-    
+
     common.log:debug("Ending performance")
     common.restoreMusic()
     --unregister our events
     event.unregister("equip", blockEquip)
     event.unregister("musicSelectTrack", endPerformance)
-    timer.delayOneFrame(function()     
+    timer.delayOneFrame(function()
         --Set status to played
         local currentPerformance = performances.getCurrent()
         if not currentPerformance then
@@ -45,14 +45,14 @@ local function endPerformance()
             animate.stop()
             currentPerformance.state = performances.STATE.PLAYED
                     --Enable controls and congratulate player
-        
+
             local tipsTotal = tips.getTotal()
             tips.stop()
-            tes3.messageBox{ 
+            tes3.messageBox{
                 message = string.format(messages.donePerforming,
                     tipsTotal, currentPerformance.publicanName
-                ), 
-                buttons = { "Okay" } 
+                ),
+                buttons = { "Okay" }
             }
             common.data.songPlaying.timesPlayed = common.data.songPlaying.timesPlayed + 1
         end
@@ -84,7 +84,7 @@ function Song:perform()
     animate.play()
     tips.start()
     common.data.currentSongDifficulty = self.difficulty
-    
+
     for _, songData in ipairs(common.data.knownSongs) do
         if songData.name == self.name then
             common.data.songPlaying = songData
@@ -93,9 +93,9 @@ function Song:perform()
     --tes3.fadeOut{ duration = 5 }
     --Start playing music
     common.playMusic{ path = self.path }
-    
+
     --Ends performance when the song ends (and another track is selected):
-    
+
     event.register("musicSelectTrack", endPerformance)
     event.register("equip", blockEquip)
 end
@@ -111,16 +111,17 @@ function Song:play()
     endPlay = function(e)
         e = e or {}
         common.log:debug("Ending play music")
-        if e.reference and e.reference ~= tes3.player then 
+        if e.reference and e.reference ~= tes3.player then
             common.log:debug("%s is equipping, not the player")
-            return 
+            return
         end
-        if e.item and e.item.objectType ~= tes3.objectType.weapon then 
+        if e.item and e.item.objectType ~= tes3.objectType.weapon then
             common.log:debug("%s is not a weapon", e.item.id)
-            return 
+            return
         end
-        event.unregister( "musicSelectTrack", endPlay )
+        event.unregister("musicSelectTrack", endPlay )
         event.unregister("equip", endPlay )
+        event.unregister("unequipped", endPlay )
         event.unregister("cellChanged", checkCell)
         event.unregister("weaponUnreadied", endPlay )
         common.data.travelPlay = nil
@@ -129,10 +130,6 @@ function Song:play()
         common.log:debug("Removing buff-------")
         mwscript.removeSpell{ reference = tes3.player, spell = self.buffId }
 
-       
-        -- for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
-        --     mwscript.removeSpell{ reference = actor, spell = self.buffId }
-        -- end
     end
     common.log:debug("playing song at path %s", self.path)
     tes3.messageBox(messages.playingSong, self.name)

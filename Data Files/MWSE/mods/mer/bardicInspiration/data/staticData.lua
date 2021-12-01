@@ -1,6 +1,11 @@
 return {
     modName = "Bardic Inspiration",
     configPath = "BardicInspiration",
+    --Merchant Data
+    merchantContainerId = "mer_BI_merch_cntr",
+    containerContents = {
+        { item = "mer_lute", count = 1},
+    },
     --Lute id mapping
     lutes = {
         ["mer_lute"] = true,
@@ -23,13 +28,13 @@ return {
             songsPerBard = 5,
             tipMulti = 1.0
         },
-        intermediate = { 
+        intermediate = {
             minSkill = 50,
             expMulti = 0.9,
             songsPerBard = 5,
             tipMulti = 3.0
         },
-        advanced = { 
+        advanced = {
             minSkill = 70,
             expMulti = 1.0,
             songsPerBard = 1,
@@ -63,7 +68,7 @@ return {
     dialogueEntries = {
         --"give a performance"
         hasPlayed = {
-            dialogue = "give a performance", 
+            dialogue = "give a performance",
             id = "7279130782524329959"
         },
         doAccept = {

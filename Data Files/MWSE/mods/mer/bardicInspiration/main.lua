@@ -12,6 +12,8 @@ local function initialized()
         local common = require("mer.bardicInspiration.common")
         --Deals with replacing vanilla lutes with playable ones
         require("mer.bardicInspiration.controllers.luteController")
+        --Deals with adding lutes to merchants around Vvardenfel
+        require("mer.bardicInspiration.controllers.merchantController")
         --Checks when the player readies a lute and triggers performances
         require("mer.bardicInspiration.controllers.lutePlayController")
         --Manage performance skill
@@ -20,6 +22,7 @@ local function initialized()
         --Manage Dialog entries
         require("mer.bardicInspiration.dialog.performanceDialog")
         require("mer.bardicInspiration.dialog.learnMusicDialog")
+
 
         common.log:info("%s Initialised", getVersion())
     end
