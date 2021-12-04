@@ -1,5 +1,14 @@
 
 local common = require("mer.bardicInspiration.common")
+local gearVersionId = "bardicInspirationGearAdded_v"
+local gearVersion = 20211206
+local function hasGearAdded(reference)
+    return reference.data[gearVersionId .. gearVersion] == true
+end
+local function setGearAdedd(reference)
+    reference.data[gearVersionId .. gearVersion] = true
+end
+
 
 local function createLuteContainerObject()
     common.log:debug("Creating Lute Container Object")
@@ -15,8 +24,10 @@ local function createLuteContainerObject()
     if containerObj then
         --Add contents
         for _, data in ipairs(common.staticData.containerContents) do
-            common.log:trace("Adding %s %s to container", data.count, data.item)
-            containerObj.inventory:addItem(data)
+            if not containerObj.inventory:contains(data.item) then
+                common.log:trace("Adding %s %s to container", data.count, data.item)
+                containerObj.inventory:addItem(data)
+            end
         end
         return containerObj
     end
@@ -38,6 +49,24 @@ local function createLuteContainerReference(merchantRef, containerObj)
     end
 end
 
+
+
+local function removeOldContainers(ref)
+    for container in ref.cell:iterateReferences(tes3.objectType.container) do
+        if container.baseObject.id:lower() == common.staticData.merchantContainerId:lower() then
+            local owner = tes3.getOwner(container)
+            if owner.id:lower() == ref.baseObject.id:lower() then
+                common.log:debug("Found old container %s, removing", container.object.id)
+                container:disable()
+                mwscript.setDelete{ reference = container}
+            else
+                common.log:debug("Owner check failed")
+            end
+        end
+    end
+end
+
+
 local function tryAddContainer(e)
     if not common.config.enabled then return end
     --check merchant
@@ -45,21 +74,21 @@ local function tryAddContainer(e)
     local merchantRef = e.reference
     if not isLuteMerchant then return end
     common.log:debug("is Lute Merchant")
-    --create object
-    local containerObj = createLuteContainerObject()
-    if containerObj then
-        common.log:debug("Created container object")
-    else
-        common.log:error("Failed to create container object")
-        return
-    end
-    --create reference
-    local containerRef = createLuteContainerReference(merchantRef, containerObj)
-    if containerRef then
-        common.log:debug("Created container reference")
-    else
-        common.log:error("Failed to create container reference")
-        return
+
+    if not hasGearAdded(merchantRef) then
+        setGearAdedd(merchantRef)
+        --create object
+        local containerObj = createLuteContainerObject()
+        if containerObj then
+            common.log:debug("Created container object")
+        else
+            common.log:error("Failed to create container object")
+            return
+        end
+        --remove old reference
+        removeOldContainers(merchantRef)
+        --create reference
+        createLuteContainerReference(merchantRef, containerObj)
     end
 end
 event.register("mobileActivated", tryAddContainer )
