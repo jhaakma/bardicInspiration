@@ -13,7 +13,7 @@ end
 
 local function knowsSong(song)
     for _, knownSong in ipairs(common.data.knownSongs) do
-        if song.name == knownSong.name then 
+        if song.name == knownSong.name then
             return true
         end
     end
@@ -49,7 +49,7 @@ end
 
 
 
---[[ 
+--[[
     Add a random set of songs from each difficulty to a bard's repertiore
 ]]
 local function addSongsToBard(bard)
@@ -67,11 +67,6 @@ local function addSongsToBard(bard)
     end
 end
 
-local function isBard(ref)
-    return ref.object
-        and ref.object.class
-        and ref.object.class.id == "Bard"
-end
 
 --[[
     Initialise the data on a bard reference
@@ -89,7 +84,7 @@ end
     metafunctions for accessing data on bard reference
 ]]
 local function getBardData(bard)
-    if not isBard(bard) then return end
+    if not common.isBard(bard) then return end
     local data = setmetatable({}, {
         __index = function(_, key)
             if bard then
@@ -170,7 +165,7 @@ local function infoTeachConfirm(e)
                         common.stopMusic{ crossfade = 3.0 }
                         timer.start{
                             duration = 1,
-                            type = timer.real, 
+                            type = timer.real,
                             iterations = 1,
                             callback = function()
                                 local msg = string.format(messages.learnedSong, song.name)
@@ -216,7 +211,7 @@ local function infoTeachChoice(e)
                 message = messages.dialog_teachChoice
                 e.text = string.format(message, difficultyMsg, songToLearn.name)
             end
-            
+
         else
             common.log:debug("infoTeachChoice(): No song to learn")
         end
@@ -228,7 +223,7 @@ event.register("infoGetText", infoTeachChoice, {filter = tes3.getDialogueInfo(in
 
 --Filters
 local function filterNoTeachMustWait(e)
-    if not isBard(e.reference) then return end
+    if not common.isBard(e.reference) then return end
     common.log:debug("---filterNoTeachMustWait")
     currentBard = e.reference
     if bardReadyToTeach(currentBard) then
@@ -239,13 +234,13 @@ event.register("infoFilter", filterNoTeachMustWait, { filter = tes3.getDialogueI
 
 
 local function filterTeachChoice(e)
-    if not isBard(e.reference) then return end
+    if not common.isBard(e.reference) then return end
     common.log:debug("---filterTeachChoice")
     currentBard = e.reference
     local songToLearn = getSongFromBard(currentBard)
     if songToLearn and hasSkillsToLearn(songToLearn) and not knowsSong(songToLearn) then
         --passes based on vanilla filters
-    else -- 
+    else --
         e.passes = false
     end
 end
@@ -253,26 +248,45 @@ event.register("infoFilter", filterTeachChoice, { filter = tes3.getDialogueInfo(
 
 
 local function filterNoTeachLowSkill(e)
-    if not isBard(e.reference) then return end
+    if not common.isBard(e.reference) then return end
     common.log:debug("---filterNoTeachLowSkill")
     currentBard = e.reference
     local songToLearn = getSongFromBard(currentBard)
     if songToLearn then
         --passes based on vanilla filters
-    else -- 
+    else --
         e.passes = false
     end
 end
 event.register("infoFilter", filterNoTeachLowSkill, { filter = tes3.getDialogueInfo(infos.noTeachLowSkill)})
 
 local function filterNoTeachNoSongs(e)
-    if not isBard(e.reference) then return end
+    if not common.isBard(e.reference) then return end
     common.log:debug("---filterNoTeachNoSongs")
     currentBard = e.reference
     local songToLearn = getSongFromBard(currentBard)
-    if songToLearn and not knowsSong(songToLearn) then 
+    if songToLearn and not knowsSong(songToLearn) then
         e.passes = false
     end
 end
 event.register("infoFilter", filterNoTeachNoSongs, { filter = tes3.getDialogueInfo(infos.noTeachNoSongs)})
+
+--Adds class filters to all dialogs
+for _, infoData in pairs(infos) do
+    if infoData.classFilter then
+        event.register("infoFilter", function(e)
+            local passes = false
+            if infoData.classFilter == "bard" and common.isBard(e.reference) then
+                common.log:debug("Is a bard!")
+                passes = true
+            elseif infoData.classFilter == "publican" and common.isInnkeeper(e.reference) then
+                common.log:debug("Is an innkeeper!")
+                passes = true
+            end
+            if not passes then
+                e.passes = false
+            end
+        end, { filter = tes3.getDialogueInfo(infoData)})
+    end
+end
 

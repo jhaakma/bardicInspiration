@@ -2,9 +2,10 @@
     Skills
 ]]
 local messages = require("mer.bardicInspiration.messages.messages")
+local common = require("mer.bardicInspiration.common")
 local skillModule = include("OtherSkills.skillModule")
 local this = {}
-this.skills = {}
+
 --Tell player if they don't have the right version of Skills Module
 local function checkVersion()
     if not skillModule then
@@ -46,7 +47,7 @@ local function getStartingSkillLevel()
         val = math.clamp(val, minVal, maxVal)
         --make it by increments of 5
         val = math.ceil(val / 5) * 5
-        if tes3.player.object.class.id == "Bard" then
+        if common.isBard(tes3.player) then
             val = val + 15
         end
     end
@@ -69,7 +70,7 @@ local function checkCharGen()
                 specialization = tes3.specialization.stealth
             }
         )
-        this.skills.performance = skillModule.getSkill("BardicInspiration:Performance")
+        common.skills.performance = skillModule.getSkill("BardicInspiration:Performance")
     end
 end
 

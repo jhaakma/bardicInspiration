@@ -3,7 +3,7 @@ local this = {}
 
 this.staticData = require("mer.bardicInspiration.data.staticData")
 this.modName = this.staticData.modName
-this.skills = require("mer.bardicInspiration.controllers.skillController").skills
+this.skills = {}
 this.messageBox = require("mer.bardicInspiration.messageBox")
 
 do --mcm config
@@ -89,8 +89,16 @@ function this.isInnkeeper(ref)
     if (ref.object.class and this.staticData.publicanClasses[ref.object.class.id:lower()]) or this.config.innkeepers[id] then
         return true
     end
+    return false
 end
 
+function this.isBard(ref)
+    local id = ref.baseObject.class.id:lower()
+    if this.staticData.bardClasses[id] then
+        return true
+    end
+    return false
+end
 
 function this.shuffle(tbl)
     for i = #tbl, 2, -1 do
