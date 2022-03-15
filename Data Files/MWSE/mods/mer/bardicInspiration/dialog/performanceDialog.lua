@@ -67,9 +67,6 @@ local function showNoSongs(e)
 end
 event.register("infoGetText", showNoSongs, { filter = tes3.getDialogueInfo(infos.noSongs) } )
 
-
-
-
 ---FILTERS-----------------
 
 local function filterHasPlayed(e)--"Thanks for playing! Here's your payment"

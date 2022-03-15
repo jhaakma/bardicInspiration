@@ -4,7 +4,8 @@ return {
     innkeepers = {
         ["arrille"] = true,
         ["lirielle stoine"] = true,
-        ["phane rielle"] = true
+        ["phane rielle"] = true,
+        ["muriel sette"] = true,
     },
     luteMerchants = {
         ["ra'virr"] = true,

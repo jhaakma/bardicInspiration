@@ -61,7 +61,7 @@ end
 event.register("loaded", onLoad)
 
 local logLevel = this.config.logLevel
-this.log = require("mer.bardicInspiration.logger").new{
+this.log = require("logging.logger").new{
     name = "Bardic Inspiration",
     --outputFile = "Ashfall.log",
     logLevel = logLevel
