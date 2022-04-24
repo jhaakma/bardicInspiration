@@ -59,19 +59,19 @@ local function replaceLute(reference)
     end
 end
 
-local function translateFloorLute(ref)
-    local node = ref.sceneNode:getObjectByName("MER_LUTE")
-    if node then
-        common.log:debug("translating floor sceneNode")
-        node.translation.x = -3.5
-        node.translation.y = 4.9
-        node.translation.z = 6.0
-        common.log:debug("rotating floor sceneNode")
-        local rot = tes3matrix33.new()
-        rot:fromEulerXYZ(math.rad(4), math.rad(89), math.rad(0))
-        node.rotation = rot
+local function getChildIndexByName(collection, name)
+	for i, child in ipairs(collection) do
+		if (child and child.name and child.name:lower() == name:lower()) then
+			return i - 1
+		end
+	end
+end
 
-        node.scale = 1.07
+local function translateFloorLute(ref)
+    local switchNode = ref.sceneNode:getObjectByName("SWITCH_LUTE")
+    if switchNode then
+        local groundIndex = getChildIndexByName(switchNode.children, "SWITCH_GROUND")
+        switchNode.switchIndex = groundIndex
     end
 end
 
