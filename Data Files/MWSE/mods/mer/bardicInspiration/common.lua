@@ -93,7 +93,7 @@ function this.isInnkeeper(ref)
 end
 
 function this.isBard(ref)
-    local id = ref.baseObject.class.id:lower()
+    local id = ref.baseObject.class and ref.baseObject.class.id:lower()
     if this.staticData.bardClasses[id] then
         return true
     end
