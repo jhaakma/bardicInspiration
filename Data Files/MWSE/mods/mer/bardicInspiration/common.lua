@@ -108,8 +108,6 @@ function this.shuffle(tbl)
     return tbl
 end
 
-
-
 local function setControlsDisabled(state)
     tes3.mobilePlayer.controlsDisabled = state
     tes3.mobilePlayer.jumpingDisabled = state
