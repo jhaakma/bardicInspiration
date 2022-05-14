@@ -6,6 +6,7 @@ local function onLoad()
         iterations = -1,
         callback = function()
             if common.data.songPlaying then
+                if not common.skills.performance then return end
                 local difficulty = common.data.currentSongDifficulty or "beginner"
                 local difficultyMulti = common.staticData.difficulties[difficulty].expMulti
 
@@ -17,7 +18,7 @@ local function onLoad()
                 common.log:trace("difficultyMulti: %s", difficultyMulti)
                 common.log:trace("skillLevelMulti: %s", skillLevelMulti)
                 common.log:trace("performSkillProgress: %s", common.staticData.performExperiencePerSecond)
-            
+
                 local progress = difficultyMulti * skillLevelMulti * common.staticData.performExperiencePerSecond
 
                 common.log:trace("Progressing skill by %s", progress)
@@ -30,7 +31,7 @@ local function onLoad()
                 local minLevelMulti = common.staticData.skillLevelMultis.min
                 local maxLevelMulti = common.staticData.skillLevelMultis.max
                 local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
-                
+
                 local progress = common.staticData.travelPlayExperiencePerSecond * skillLevelMulti
                 common.skills.performance:progressSkill(progress)
                 common.log:trace("Travel play experience gained: %s", progress)

@@ -13,6 +13,7 @@ end
 
 local function calculateSkillEffect()
     --Skill Effect
+    if not common.skills.performance then return end
     local maxSkill = common.staticData.maxSkillRewardEffect
     local skill = common.skills.performance.value
     local skillEffect = math.remap(skill, 0, 100, 1.0, maxSkill)
@@ -21,8 +22,10 @@ local function calculateSkillEffect()
 end
 
 function this.calculate(publican)
+
     local dispEffect = calculateDispositionEffect(publican)
     local skillEffect = calculateSkillEffect()
+    if not skillEffect then return end
     --Calculate Reward
     local baseRewardAmount = common.staticData.baseRewardAmount
     local reward = baseRewardAmount * dispEffect * skillEffect
@@ -39,11 +42,11 @@ function this.give(amount)
     assert(amount)
     assert(type(amount) == "number")
     tes3.addItem({
-        reference = tes3.player, 
+        reference = tes3.player,
         item = "gold_001",
         count = amount
     })
-    timer.frame.delayOneFrame(function() 
+    timer.frame.delayOneFrame(function()
         tes3.messageBox(tes3.findGMST(tes3.gmst.sNotifyMessage61).value, amount, tes3.getObject("Gold_001").name)
     end)
 end
@@ -52,7 +55,7 @@ function this.raiseDisposition(e)
     assert(e.actorId)
     assert(e.rewardAmount)
     local dispIncrease = math.clamp(
-        e.rewardAmount * common.staticData.dispIncreasePerRewardAmount, 
+        e.rewardAmount * common.staticData.dispIncreasePerRewardAmount,
         1, common.staticData.maxDispositionIncrease
     )
     common.log:debug("Increasing %s's disposition by %s", e.actorId, dispIncrease)

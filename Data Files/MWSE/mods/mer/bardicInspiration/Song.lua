@@ -61,6 +61,7 @@ local function endPerformance()
 end
 
 function Song:getSkillIncrease()
+    if not common.skills.performance then return end
     local skillLevel = common.skills.performance.value
     local experienceMulti = common.staticData.difficulties[self.difficulty].expMulti
     local minLevelMulti = common.staticData.skillLevelMultis.min

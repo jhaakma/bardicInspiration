@@ -21,6 +21,7 @@ local function knowsSong(song)
 end
 
 local function getPlayerDifficultyLevel()
+    if not common.skills.performance then return end
     local difficultyOrder = { "intermediate", "advanced"}
     local playerSkill = common.skills.performance.value
     local playerDifficultyLevel = "beginner"

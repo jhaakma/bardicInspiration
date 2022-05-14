@@ -19,6 +19,7 @@ local function calculateLuckIntervalEffect()
 end
 
 local function calculateSkillIntervalEffect()
+    if not common.skills.performance then return end
     --calculate skill effect
     local maxSkillEffect = common.staticData.maxSkillTipIntervalEffect
     local skill = common.skills.performance.value
@@ -75,7 +76,7 @@ local function doTip()
     local tip = generateTip()
     common.log:debug("Giving player tip of %s gold", tip)
     tes3.addItem({
-        reference = tes3.player, 
+        reference = tes3.player,
         item = "gold_001",
         count = tip
     })
