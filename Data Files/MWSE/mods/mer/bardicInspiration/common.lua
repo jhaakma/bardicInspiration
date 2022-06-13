@@ -4,7 +4,6 @@ local this = {}
 this.staticData = require("mer.bardicInspiration.data.staticData")
 this.modName = this.staticData.modName
 this.skills = {}
-this.messageBox = require("mer.bardicInspiration.messageBox")
 
 do --mcm config
     local inMemConfig

@@ -9,29 +9,29 @@ function this.showMenu()
         local buttons = {}
         --add songs
         for _, song in ipairs(this.getKnownSongs({ sort = true, reverse = true})) do
-            table.insert(buttons, { 
-                text = song.name, 
-                callback = function() 
+            table.insert(buttons, {
+                text = song.name,
+                callback = function()
                     common.log:debug("Performing: %s", song.name)
-                    song:perform() 
+                    song:perform()
                 end,
                 tooltip = {
                     header = song.name,
-                    text = string.format(messages.songTooltip, 
-                        messages["difficulty_" .. song.difficulty], 
-                        song.timesPlayed, 
+                    text = string.format(messages.songTooltip,
+                        messages["difficulty_" .. song.difficulty],
+                        song.timesPlayed,
                         song.taughtBy or ""
                     )
                 }
             })
         end
 
-        common.messageBox({
+        tes3ui.showMessageMenu{
             message = messages.whatToPlay,
             buttons = buttons,
-            doesCancel = true,
-            maxButtons = 10
-        })
+            cancels = true,
+            pageSize = 10
+        }
     end)
 end
 
@@ -66,7 +66,7 @@ function this.sortSongListByDifficulty(e)
         if sorter[songA.difficulty] == sorter[songB.difficulty] then
             return common.songSorter(songA, songB)
         end
-    
+
         if e.reverse then
             return sorter[songA.difficulty]>sorter[songB.difficulty]
         else
