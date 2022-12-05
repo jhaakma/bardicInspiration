@@ -278,10 +278,10 @@ for _, infoData in pairs(infos) do
         event.register("infoFilter", function(e)
             local passes = false
             if infoData.classFilter == "bard" and common.isBard(e.reference) then
-                common.log:debug("Is a bard!")
+                common.log:trace("Is a bard!")
                 passes = true
             elseif infoData.classFilter == "publican" and common.isInnkeeper(e.reference) then
-                common.log:debug("Is an innkeeper!")
+                common.log:trace("Is an innkeeper!")
                 passes = true
             end
             if not passes then

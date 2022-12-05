@@ -29,7 +29,7 @@ function this.calculate(publican)
     --Calculate Reward
     local baseRewardAmount = common.staticData.baseRewardAmount
     local reward = baseRewardAmount * dispEffect * skillEffect
-    common.log:debug('setting reward amount to %s', reward)
+    common.log:trace('setting reward amount to %s', reward)
     tes3.findGlobal("mer_perform_reward").value = reward
     return reward
 end
