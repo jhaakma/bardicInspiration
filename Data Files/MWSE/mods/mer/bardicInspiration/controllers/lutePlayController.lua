@@ -31,15 +31,53 @@ local function hasGig()
     return performances.getCurrent() ~= nil
 end
 
-local function alreadyPlayed()
+local function hasntAlreadyPlayed()
     local currentPerformance = performances.getCurrent()
-    return currentPerformance and currentPerformance.state == performances.STATE.PLAYED
+    return not (currentPerformance and currentPerformance.state == performances.STATE.PLAYED)
 end
 
-local function doSkip()
+local function noSkipState()
     local currentPerformance = performances.getCurrent()
-    return currentPerformance and currentPerformance.state == performances.STATE.SKIP
+    return not(currentPerformance and currentPerformance.state == performances.STATE.SKIP)
 end
+
+local function notCurrentlyPlaying()
+    return common.data.songPlaying == nil
+end
+
+local gigConditions = {
+    {
+        name = "notCurrentlyPlaying",
+        check = notCurrentlyPlaying,
+        message = nil
+    },
+    {
+        name = "inTavern",
+        check = inTavern,
+        message = messages.notTavern,
+    },
+    {
+        name = "hasGig",
+        check = hasGig,
+        message = messages.noGigScheduled,
+    },
+    {
+        name = "isNight",
+        check = isNight,
+        message = messages.notNightTime,
+    },
+    {
+        name = "hasntAlreadyPlayed",
+        check = hasntAlreadyPlayed,
+        message = messages.alreadyPlayed,
+    },
+    {
+        name = "noSkipState",
+        check = noSkipState,
+        message = nil,
+    },
+}
+
 
 ---@param e weaponReadiedEventData
 local function onReadyLute(e)
@@ -47,40 +85,24 @@ local function onReadyLute(e)
     if not e.weaponStack then return end
     if not (e.reference == tes3.player) then return end
     if not common.isLute(e.weaponStack.object, e.weaponStack.itemData) then return end
+
     if not isIndoors() then
+        common.log:debug("Playing random")
         --Play while travelling
         songController.playRandom()
         return
     end
 
-    if common.data.songPlaying then
-        --already playing!
-        return
+    for _, condition in ipairs(gigConditions) do
+        if not condition.check() then
+            common.log:debug("Failed check %s", condition.name)
+            if condition.message then
+                tes3.messageBox(condition.message)
+            end
+            return
+        end
     end
-    if not inTavern() then
-        tes3.messageBox(messages.notTavern)
-        return
-    end
-
-    if not hasGig() then
-        tes3.messageBox(messages.noGigScheduled)
-        return
-    end
-
-    if not isNight() then
-        tes3.messageBox(messages.notNightTime)
-        return
-    end
-
-    if alreadyPlayed() then
-        tes3.messageBox(messages.alreadyPlayed)
-        return
-    end
-
-    if doSkip() then
-        return
-    end
-
+    common.log:debug("Passed checks, opening menu")
     --Perform at tavern
     songController.showMenu()
 end
