@@ -6,6 +6,7 @@ return {
         ["lirielle stoine"] = true,
         ["phane rielle"] = true,
         ["muriel sette"] = true,
+        ["helviane desele"] = true,
     },
     luteMerchants = {
         ["ra'virr"] = true,
