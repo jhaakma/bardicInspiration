@@ -49,8 +49,8 @@ function this.play()
     common.disableControls()
     if mesh and isHumanoid(tes3.player.object) then
         common.data.previousAnimationMesh = tes3.player.object.mesh
-        local heldItem = tes3.getEquippedItem{ 
-            actor = tes3.player, 
+        local heldItem = tes3.getEquippedItem{
+            actor = tes3.player,
             objectType = tes3.objectType.weapon
         }
         common.data.heldLute = heldItem and heldItem.object.id
@@ -78,7 +78,7 @@ function this.stop()
         })
         common.data.previousAnimationMesh = nil
         common.log:debug("Held lute2: %s", common.data.heldLute)
-        
+
         attachPlayLute{remove = true}
         mwscript.equip{ reference = tes3.player, item = common.data.heldLute }
         common.data.heldLute = nil

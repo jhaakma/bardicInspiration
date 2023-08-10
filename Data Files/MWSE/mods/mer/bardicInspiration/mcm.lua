@@ -77,7 +77,7 @@ local function registerModConfig()
         inGameOnly = true,
         postCreate = createSongListPostCreate("advanced")
     }
-    
+
 
     template:createExclusionsPage{
         label = messages.mcm_tavernspage_name,

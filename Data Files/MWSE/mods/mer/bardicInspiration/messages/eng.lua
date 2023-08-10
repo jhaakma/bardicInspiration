@@ -5,7 +5,7 @@
     must translate everything in the mcm table
 ]]
 return {
-    
+
 --General
 modName = "Bardic Inspiration",
 
@@ -23,7 +23,7 @@ playingSong = "Playing \"%s\".",
 learnedSong = "You learned \"%s\"!",
 
 
-songTooltip = 
+songTooltip =
 [[Difficulty: %s
 Times Played: %s
 Taught by: %s]],--Keep the [[ ]] and don't add indentation!
@@ -43,7 +43,7 @@ dialog_NoSongsBardFemale = "You should actually learn to play something before y
 
 --mcm
 mcm_page_settings = "Settings",
-mcm_page_description = 
+mcm_page_description =
 [[Bardic Inspiration allows you to book performances at taverns and perform with a lute.
 
 Before you can perform, you need a lute, and some music to play. To learn a song, talk to an NPC with the "Bard" class and select the "teach me a song" topic. The NPC must have sufficiently high disposition towards you. If you're having trouble finding a bard, talk to an innkeeper and ask to perform, and they may point out a nearby bard to you.

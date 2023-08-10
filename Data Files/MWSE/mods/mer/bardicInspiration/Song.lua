@@ -24,15 +24,22 @@ end
 local function blockEquip()
     return false
 end
-local function endPerformance()
+---@param e musicChangeTrackEventData
+local function endPerformance(e)
+    e = e or {}
 
     if not common.data.songPlaying then return end
+    if e.context == "mwscript" then
+        common.log:info("MwScript streamMusic attemtped while performing. Blocking.")
+        e.block = true
+        return
+    end
 
     common.log:debug("Ending performance")
     common.restoreMusic()
     --unregister our events
     event.unregister("equip", blockEquip)
-    event.unregister("musicSelectTrack", endPerformance)
+    event.unregister("musicChangeTrack", endPerformance)
     timer.delayOneFrame(function()
         --Set status to played
         local currentPerformance = performances.getCurrent()
@@ -97,7 +104,7 @@ function Song:perform()
 
     --Ends performance when the song ends (and another track is selected):
 
-    event.register("musicSelectTrack", endPerformance, { priority = 1000 })
+    event.register("musicChangeTrack", endPerformance, { priority = 1000 })
     event.register("equip", blockEquip, { priority = 1000 } )
 end
 
@@ -113,14 +120,14 @@ function Song:play()
         e = e or {}
         common.log:debug("Ending play music")
         if e.reference and e.reference ~= tes3.player then
-            common.log:debug("%s is equipping, not the player")
+            common.log:debug("%s is equipping, not the player", e.reference)
             return
         end
         if e.item and e.item.objectType ~= tes3.objectType.weapon then
             common.log:debug("%s is not a weapon", e.item.id)
             return
         end
-        event.unregister("musicSelectTrack", endPlay, { priority = 1000 } )
+        event.unregister("musicChangeTrack", endPlay, { priority = 1000 } )
         event.unregister("equip", endPlay )
         event.unregister("unequipped", endPlay )
         event.unregister("cellChanged", checkCell)
@@ -140,7 +147,7 @@ function Song:play()
     -- for actor in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
     --     mwscript.addSpell{ reference = actor, spell = self.buffId }
     -- end
-    event.register("musicSelectTrack", endPlay, { priority = 1000 } )
+    event.register("musicChangeTrack", endPlay, { priority = 1000 } )
     event.register("equip", endPlay, { priority = 1000 }  )
     event.register("unequipped", endPlay, { priority = 1000 }  )
     event.register("cellChanged", checkCell, { priority = 1000 } )
@@ -149,7 +156,7 @@ end
 
 local function clearOnLoad()
     event.unregister("equip", blockEquip)
-    event.unregister("musicSelectTrack", endPerformance)
+    event.unregister("musicChangeTrack", endPerformance)
     --Clear on load
 
     if common.data.songPlaying then

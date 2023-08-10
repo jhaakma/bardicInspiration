@@ -22,7 +22,7 @@ end
 
 function this.getAll()
     return performancesData:get()
-end 
+end
 
 function this.getCurrent()
     return performancesData:get()[tes3.player.cell.id]

@@ -1,10 +1,10 @@
 local function getVersion()
-    local versionFile = io.open("Data Files/MWSE/mods/mer/bardicInspiration/version.txt", "r")
-    local version = ""
-    for line in versionFile:lines() do -- Loops over all the lines in an open text file
-        version = line
+    local metadata = toml.loadMetadata("BardicInspiration")
+    if metadata then
+        return metadata.package.version
+    else
+        return "[metadata missing]"
     end
-    return version
 end
 
 local function initialized()
@@ -12,7 +12,7 @@ local function initialized()
         local common = require("mer.bardicInspiration.common")
         --Deals with replacing vanilla lutes with playable ones
         require("mer.bardicInspiration.controllers.luteController")
-        --Deals with adding lutes to merchants around Vvardenfel
+        --Deals with adding lutes to merchants around Vvardenfell
         require("mer.bardicInspiration.controllers.merchantController")
         --Checks when the player readies a lute and triggers performances
         require("mer.bardicInspiration.controllers.lutePlayController")
@@ -22,8 +22,6 @@ local function initialized()
         --Manage Dialog entries
         require("mer.bardicInspiration.dialog.performanceDialog")
         require("mer.bardicInspiration.dialog.learnMusicDialog")
-
-
         common.log:info("%s Initialised", getVersion())
     end
 end

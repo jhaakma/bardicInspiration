@@ -133,6 +133,7 @@ end
 local function getSongFromBard(bard)
     if not bard then return end
     local bardData = getBardData(bard)
+    if not bardData then return end
 
     if canLearnSong(bardData.currentSong) then
         return bardData.currentSong
@@ -152,6 +153,16 @@ local function getSongFromBard(bard)
     end
 end
 
+local function onMusicChangeTrack(e)
+    if e.context == "mwscript" then
+        e.block = true
+    end
+end
+
+local function cancelEventOnLoad()
+    event.unregister("musicChangeTrack", onMusicChangeTrack)
+end
+
 --Infos
 local function infoTeachConfirm(e)
     if e.passes ~= false then
@@ -159,11 +170,15 @@ local function infoTeachConfirm(e)
             local song = getSongFromBard(currentBard)
             if song then
                 common.playMusic{ path = song.path}
+                event.register("musicChangeTrack", onMusicChangeTrack)
+                event.register("loaded", cancelEventOnLoad)
                 common.fadeTimeOut{
                     hoursPassed = 0.25,
                     secondsTaken = 10,
                     callback = function()
                         common.stopMusic{ crossfade = 3.0 }
+                        event.unregister("musicChangeTrack", onMusicChangeTrack)
+                        event.unregister("loaded", cancelEventOnLoad)
                         timer.start{
                             duration = 1,
                             type = timer.real,
