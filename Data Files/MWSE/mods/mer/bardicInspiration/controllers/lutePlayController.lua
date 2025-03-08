@@ -9,75 +9,67 @@ local performances = require("mer.bardicInspiration.data.performances")
 local messages = require("mer.bardicInspiration.messages.messages")
 local songController = require("mer.bardicInspiration.controllers.songController")
 
-local function inTavern()
-    for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
-        if common.isInnkeeper(ref) then return true end
-    end
-    return false
-end
+---@class BardicInspiration.GigCondition
+---@field name string The name of the condition
+---@field check fun():boolean The function that checks the condition
+---@field message string|nil The message to show if the condition fails
+
+local gigConditions = {
+    {
+        name = "notCurrentlyPlaying",
+        check = function()
+            return common.data.songPlaying == nil
+        end,
+        message = nil
+    },
+    {
+        name = "inTavern",
+        check = function()
+            for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
+                if common.isInnkeeper(ref) then return true end
+            end
+            return false
+        end,
+        message = messages.notTavern,
+    },
+    {
+        name = "hasGig",
+        check = function()
+            return performances.getCurrent() ~= nil
+        end,
+        message = messages.noGigScheduled,
+    },
+    {
+        name = "isNight",
+        check = function()
+            local startHour = 18
+            local gameHour = tes3.worldController.hour.value
+            return gameHour > startHour
+        end,
+        message = messages.notNightTime,
+    },
+    {
+        name = "hasntAlreadyPlayed",
+        check = function()
+            local currentPerformance = performances.getCurrent()
+            return not (currentPerformance and currentPerformance.state == performances.STATE.PLAYED)
+        end,
+        message = messages.alreadyPlayed,
+    },
+    {
+        name = "noSkipState",
+        check = function()
+            local currentPerformance = performances.getCurrent()
+            return not(currentPerformance and currentPerformance.state == performances.STATE.SKIP)
+        end,
+        message = nil,
+    },
+}
 
 local function isIndoors()
     return tes3.mobilePlayer.cell.isInterior
         and not tes3.mobilePlayer.cell.behavesAsExterior
 end
-
-local function isNight()
-    local startHour = 18
-    local gameHour = tes3.worldController.hour.value
-    return gameHour > startHour
-end
-
-local function hasGig()
-    return performances.getCurrent() ~= nil
-end
-
-local function hasntAlreadyPlayed()
-    local currentPerformance = performances.getCurrent()
-    return not (currentPerformance and currentPerformance.state == performances.STATE.PLAYED)
-end
-
-local function noSkipState()
-    local currentPerformance = performances.getCurrent()
-    return not(currentPerformance and currentPerformance.state == performances.STATE.SKIP)
-end
-
-local function notCurrentlyPlaying()
-    return common.data.songPlaying == nil
-end
-
-local gigConditions = {
-    {
-        name = "notCurrentlyPlaying",
-        check = notCurrentlyPlaying,
-        message = nil
-    },
-    {
-        name = "inTavern",
-        check = inTavern,
-        message = messages.notTavern,
-    },
-    {
-        name = "hasGig",
-        check = hasGig,
-        message = messages.noGigScheduled,
-    },
-    {
-        name = "isNight",
-        check = isNight,
-        message = messages.notNightTime,
-    },
-    {
-        name = "hasntAlreadyPlayed",
-        check = hasntAlreadyPlayed,
-        message = messages.alreadyPlayed,
-    },
-    {
-        name = "noSkipState",
-        check = noSkipState,
-        message = nil,
-    },
-}
-
 
 ---@param e weaponReadiedEventData
 local function onReadyLute(e)

@@ -10,16 +10,11 @@ local function onLoad()
                 local difficulty = common.data.currentSongDifficulty or "beginner"
                 local difficultyMulti = common.staticData.difficulties[difficulty].expMulti
 
-                local skillLevel = common.skills.performance.value
-                local minLevelMulti = common.staticData.skillLevelMultis.min
-                local maxLevelMulti = common.staticData.skillLevelMultis.max
-                local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
                 common.log:trace("Performance experience gain")
                 common.log:trace("difficultyMulti: %s", difficultyMulti)
-                common.log:trace("skillLevelMulti: %s", skillLevelMulti)
                 common.log:trace("performSkillProgress: %s", common.staticData.performExperiencePerSecond)
 
-                local progress = difficultyMulti * skillLevelMulti * common.staticData.performExperiencePerSecond
+                local progress = difficultyMulti * common.staticData.performExperiencePerSecond
 
                 common.log:trace("Progressing skill by %s", progress)
                 common.skills.performance:progressSkill(progress)
@@ -27,12 +22,11 @@ local function onLoad()
             end
 
             if common.data.travelPlay then
-                local skillLevel = common.skills.performance.value
-                local minLevelMulti = common.staticData.skillLevelMultis.min
-                local maxLevelMulti = common.staticData.skillLevelMultis.max
-                local skillLevelMulti = math.clamp(math.remap(skillLevel, 0,100, minLevelMulti, maxLevelMulti),0,100)
-
-                local progress = common.staticData.travelPlayExperiencePerSecond * skillLevelMulti
+                local difficulty = common.data.currentSongDifficulty or "beginner"
+                local difficultyMulti = common.staticData.difficulties[difficulty].expMulti
+                common.log:trace("Travel play experience gain")
+                common.log:trace("difficultyMulti: %s", difficultyMulti)
+                local progress = common.staticData.travelPlayExperiencePerSecond * difficultyMulti
                 common.skills.performance:progressSkill(progress)
                 common.log:trace("Travel play experience gained: %s", progress)
             end

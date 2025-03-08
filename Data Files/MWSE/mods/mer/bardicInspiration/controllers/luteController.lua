@@ -90,7 +90,7 @@ local function switchPlacedLute(e)
         end
     end
 end
-event.register("referenceSceneNodeCreated", switchPlacedLute)
+event.register("referenceActivated", switchPlacedLute)
 
 --[[
     referenceSceneNodeCreated may not be triggered on load, so

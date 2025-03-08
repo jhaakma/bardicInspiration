@@ -1,5 +1,6 @@
 
 local common = require("mer.bardicInspiration.common")
+local TagManager = include("CraftingFramework.components.TagManager")
 local gearVersionId = "bardicInspirationGearAdded_v"
 local gearVersion = 20211206
 local function hasGearAdded(reference)
@@ -55,10 +56,9 @@ local function removeOldContainers(ref)
     for container in ref.cell:iterateReferences(tes3.objectType.container) do
         if container.baseObject.id:lower() == common.staticData.merchantContainerId:lower() then
             local owner = tes3.getOwner(container)
-            if owner.id:lower() == ref.baseObject.id:lower() then
+            if owner and owner.id:lower() == ref.baseObject.id:lower() then
                 common.log:debug("Found old container %s, removing", container.object.id)
-                container:disable()
-                mwscript.setDelete{ reference = container}
+                container:delete()
             else
                 common.log:debug("Owner check failed")
             end
@@ -70,7 +70,10 @@ end
 local function tryAddContainer(e)
     if not common.config.enabled then return end
     --check merchant
-    local isLuteMerchant = common.config.luteMerchants[string.lower(e.reference.baseObject.id)]
+    local id = e.reference.baseObject.id:lower()
+    local isLuteMerchant = common.config.luteMerchants[id]
+        or (TagManager and TagManager.hasId{ tag = "generalTrader", id = id })
+
     local merchantRef = e.reference
     if not isLuteMerchant then return end
     common.log:debug("is Lute Merchant")

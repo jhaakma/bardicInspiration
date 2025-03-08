@@ -1,6 +1,8 @@
 
 local this = {}
 
+local TagManager = include("CraftingFramework.components.TagManager")
+
 this.staticData = require("mer.bardicInspiration.data.staticData")
 this.modName = this.staticData.modName
 this.skills = {}
@@ -53,8 +55,8 @@ end
 local function onLoad()
     initPlayerData()
     --add topics
-    mwscript.addTopic{ topic = "give a performance"}
-    mwscript.addTopic{ topic = "teach me a song"}
+    tes3.addTopic{ topic = "give a performance"}
+    tes3.addTopic{ topic = "teach me a song"}
     event.trigger("BardicInspiration:DataLoaded")
 end
 event.register("loaded", onLoad)
@@ -85,10 +87,11 @@ end
 
 function this.isInnkeeper(ref)
     local id = ref.baseObject.id:lower()
-    if (ref.object.class and this.staticData.publicanClasses[ref.object.class.id:lower()]) or this.config.innkeepers[id] then
-        return true
-    end
-    return false
+    local isPublican = ref.object.class and this.staticData.publicanClasses[ref.object.class.id:lower()]
+    local isInnkeeper = this.config.innkeepers[id]
+    local isTaggedInnkeeper = TagManager and TagManager.hasId{ tag = "innkeeper", id = id }
+
+    return isPublican or isInnkeeper or isTaggedInnkeeper
 end
 
 function this.isBard(ref)

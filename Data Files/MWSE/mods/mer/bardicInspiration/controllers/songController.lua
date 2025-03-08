@@ -1,14 +1,15 @@
-local this = {}
+---Class BardicInspiration.SongController
+local SongController = {}
 local Song = require("mer.bardicInspiration.Song")
 local common = require("mer.bardicInspiration.common")
 local messages = require("mer.bardicInspiration.messages.messages")
 
-function this.showMenu()
+function SongController.showMenu()
     --delay a frame so it triggers outside menuMode
     timer.delayOneFrame(function()
         local buttons = {}
         --add songs
-        for _, song in ipairs(this.getKnownSongs({ sort = true, reverse = true})) do
+        for _, song in ipairs(SongController.getKnownSongs({ sort = true, reverse = true})) do
             table.insert(buttons, {
                 text = song.name,
                 callback = function()
@@ -35,7 +36,7 @@ function this.showMenu()
     end)
 end
 
-function this.getKnownSongs(e)
+function SongController.getKnownSongs(e)
     e = e or { sort = false, reverse = false}
     if not tes3.player then return end
     common.log:debug("getKnownSongs()")
@@ -49,14 +50,14 @@ function this.getKnownSongs(e)
         end
     end
     if e.sort then
-        this.sortSongListByDifficulty({ list = songs, reverse = e.reverse })
+        SongController.sortSongListByDifficulty({ list = songs, reverse = e.reverse })
     end
     return songs
 end
 
 
 
-function this.sortSongListByDifficulty(e)
+function SongController.sortSongListByDifficulty(e)
     local function difficultySort(songA, songB)
         local sorter = {
             beginner = 1,
@@ -76,7 +77,7 @@ function this.sortSongListByDifficulty(e)
     table.sort(e.list, difficultySort)
 end
 
-function this.learnSong(songData)
+function SongController.learnSong(songData)
     assert(type(songData.name) == "string")
     assert(type(songData.path) == "string")
     assert(common.staticData.difficulties[songData.difficulty])
@@ -85,7 +86,7 @@ function this.learnSong(songData)
     table.insert(common.data.knownSongs, songData)
 end
 
-function this.getPlayerSong(songName)
+function SongController.getPlayerSong(songName)
     for _, songData in ipairs(common.data.knownSongs) do
         if songData.name == songName then
             return songData
@@ -93,16 +94,19 @@ function this.getPlayerSong(songName)
     end
 end
 
-function this.playRandom()
+function SongController.playRandom()
     common.log:debug("playRandom()")
-    local knownSongs = this.getKnownSongs()
+    local knownSongs = SongController.getKnownSongs()
     if #knownSongs == 0 then
         tes3.messageBox(messages.noSongsKnown)
     else
+        ---@type BardicInspiration.Song
         local song = table.choice(knownSongs)
-        common.log:debug("Playing random song %s", song.name)
-        song:play()
+        if song then
+            common.log:debug("Playing random song %s", song.name)
+            song:play()
+        end
     end
 end
 
-return this
+return SongController

@@ -1,0 +1,29 @@
+[package]
+name = "Bardic Inspiration"
+description = "A mod that allows you to learn dozens of songs on the lute and earn gold performing at taverns."
+homepage = "https://www.nexusmods.com/morrowind/mods/45441"
+repository = "https://github.com/jhaakma/bardicInspiration"
+authors = [ "Merlord",]
+version = "3.0.14"
+
+[dependencies]
+assets = [
+    "BardicInspiration.esp",
+    "Icons/mer_bard",
+    "Meshes/mer_bard",
+    "Music/mer_bard",
+    "MWSE/mods/mer/bardicInspiration",
+]
+
+[dependencies.mwse]
+buildnumber = 3302
+
+[dependencies.mge-xe]
+version = ">=0.15.0"
+
+[tools.mwse]
+lua-mod = "mer.bardicInspiration"
+
+[dependencies.mods."Skills Module"]
+mwse-module = "OtherSkills"
+url = "https://www.nexusmods.com/morrowind/mods/46034?tab=files"

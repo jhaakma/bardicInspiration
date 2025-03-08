@@ -1,4 +1,5 @@
-return {
+---@class BardicInspirationStaticData
+local staticData = {
     modName = "Bardic Inspiration",
     configPath = "BardicInspiration",
     --Merchant Data
@@ -11,10 +12,16 @@ return {
     lutes = {
         ["mer_lute"] = true,
         ["mer_lute_fat"] = true,
+        ["mer_lute_02"] = true,
+        ["mer_lute_03"] = true,
+        ["mer_lute_04"] = true,
     },
     idMapping = {
         ["misc_de_lute_01"] = "mer_lute",
-        ["misc_de_lute_01_phat"] = "mer_lute_fat"
+        ["misc_de_lute_01_phat"] = "mer_lute_fat",
+        ["t_imp_lute_01"] = "mer_lute_02",
+        ["t_com_lute_01"] = "mer_lute_03",
+        ["ab_mus_delutethin"] = "mer_lute_04",
     },
     initPlayerData = {
         taverns = {},
@@ -23,25 +30,27 @@ return {
     publicanClasses = {
         publican = true,
         t_sky_publican = true,
-        t_cyr_publican = true
+        t_cyr_publican = true,
+        t_glb_publican = true,
     },
     bardClasses = {
         bard = true,
         t_sky_bard = true,
-        t_cyr_bard = true
+        t_cyr_bard = true,
+        t_glb_bard = true,
     },
     bardTeachIntervalHours = 48,
     bardTeachSongPlayedMin = 1,
     difficulties = {
         beginner = {
             minSkill = -1,
-            expMulti = 0.8,
+            expMulti = 0.50,
             songsPerBard = 5,
             tipMulti = 1.0
         },
         intermediate = {
             minSkill = 50,
-            expMulti = 0.9,
+            expMulti = 0.75,
             songsPerBard = 5,
             tipMulti = 3.0
         },
@@ -52,13 +61,8 @@ return {
             tipMulti = 5.0
         }
     },
-    --experience multipliers
-    skillLevelMultis = {
-        min = 3.0,
-        max = 1.0
-    },
     performExperiencePerSecond = 1.0,
-    travelPlayExperiencePerSecond = 0.2,
+    travelPlayExperiencePerSecond = 0.1,
     --Tavern reward configs
     baseRewardAmount = 10,
     maxDispRewardEffect = 2.0,
@@ -163,3 +167,5 @@ return {
         },
     }
 }
+
+return staticData

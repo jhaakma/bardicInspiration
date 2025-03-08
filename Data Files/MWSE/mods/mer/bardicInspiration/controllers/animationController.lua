@@ -1,6 +1,7 @@
 local this = {}
 local common = require("mer.bardicInspiration.common")
 
+
 local mesh = "mer_bard\\anim\\Bard.nif"
 local group = tes3.animationGroup.idle2
 
@@ -14,19 +15,23 @@ local function onTabUp()
     tes3.setVanityMode({ enabled = true })
 end
 
-
+---@param e { lute?: tes3weapon }?
 local function attachPlayLute(e)
     e = e or {}
+    common.log:debug("attachPlayLute. Lute = %s", e.lute or "nil")
     local shieldBone = tes3.player.sceneNode:getObjectByName("Bip01 L Hand")
-    if not e.remove then
-        local luteMesh = tes3.loadMesh("mer_bard/mer_lute_play.nif"):clone()
-        shieldBone:attachChild(luteMesh, true)
+    if e.lute then
+        local luteMeshId = e.lute.mesh
+        common.log:debug("Attaching lute mesh: %s", luteMeshId or "")
+        local luteMesh = tes3.loadMesh(luteMeshId, false):clone()
+        local transformNode = luteMesh:getObjectByName("LUTE_PLAY_TRANSFORM"):clone()
+        shieldBone:attachChild(transformNode, true)
+        transformNode:attachChild(luteMesh, true)
     else
-        local luteMesh = shieldBone:getObjectByName("LUTE_PLAY")
+        local luteMesh = shieldBone:getObjectByName("LUTE_PLAY_TRANSFORM")
         shieldBone:detachChild(luteMesh)
     end
 end
-
 
 
 local function isHumanoid(obj)
@@ -43,6 +48,7 @@ local function isHumanoid(obj)
     return obj and obj.race and humanoidRaces[obj.race.id:lower()]
 end
 
+
 function this.play()
     --Vanity mode, disable controls
     tes3.setVanityMode({ enabled = true })
@@ -53,7 +59,12 @@ function this.play()
             actor = tes3.player,
             objectType = tes3.objectType.weapon
         }
-        common.data.heldLute = heldItem and heldItem.object.id
+        if not heldItem then
+            common.log:error("No held item")
+            return
+        end
+        local lute = heldItem.object
+        common.data.heldLute = lute.id
         common.log:debug("Held lute: %s", common.data.heldLute)
         tes3.playAnimation({
             reference = tes3.player,
@@ -62,7 +73,10 @@ function this.play()
             startFlag = 1
         })
         tes3.mobilePlayer:unequip{ type = tes3.objectType.weapon}
-        attachPlayLute()
+
+
+        common.log:debug("Attaching lute: %s", lute)
+        attachPlayLute{ lute = lute }
     end
     event.register("keyUp", onTabUp, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
     event.register("keyDown", onTabDown, { filter = tes3.getInputBinding(tes3.keybind.togglePOV).code })
@@ -79,7 +93,7 @@ function this.stop()
         common.data.previousAnimationMesh = nil
         common.log:debug("Held lute2: %s", common.data.heldLute)
 
-        attachPlayLute{remove = true}
+        attachPlayLute()
         mwscript.equip{ reference = tes3.player, item = common.data.heldLute }
         common.data.heldLute = nil
     end
