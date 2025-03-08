@@ -4,16 +4,10 @@ description = "A mod that allows you to learn dozens of songs on the lute and ea
 homepage = "https://www.nexusmods.com/morrowind/mods/45441"
 repository = "https://github.com/jhaakma/bardicInspiration"
 authors = [ "Merlord",]
-version = "3.0.14"
+version = "3.1.0"
 
 [dependencies]
-assets = [
-    "BardicInspiration.esp",
-    "Icons/mer_bard",
-    "Meshes/mer_bard",
-    "Music/mer_bard",
-    "MWSE/mods/mer/bardicInspiration",
-]
+assets = [ "BardicInspiration.esp", "Icons/mer_bard", "Meshes/mer_bard", "Music/mer_bard", "MWSE/mods/mer/bardicInspiration",]
 
 [dependencies.mwse]
 buildnumber = 3302
