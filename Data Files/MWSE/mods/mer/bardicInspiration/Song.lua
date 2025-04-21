@@ -8,6 +8,7 @@ local animate = require("mer.bardicInspiration.controllers.animationController")
 local tips = require("mer.bardicInspiration.controllers.tipsController")
 local messages = require("mer.bardicInspiration.messages.messages")
 local performances = require("mer.bardicInspiration.data.performances")
+local journal = require("mer.bardicInspiration.controllers.journalController")
 
 
 ---@class BardicInspiration.Song.constructorParams
@@ -71,14 +72,23 @@ local function endPerformance(e)
             currentPerformance.state = performances.STATE.PLAYED
                     --Enable controls and congratulate player
 
-            local tipsTotal = tips.getTotal()
-            tips.stop()
-            tes3.messageBox{
+            local tipsTotal = tips:getTotal()
+            tips:stop()
+            local message
+            if tipsTotal > 0 then
                 message = string.format(messages.donePerforming,
                     tipsTotal, currentPerformance.publicanName
-                ),
+                )
+            else
+                message = string.format(messages.donePerformingNoTips,
+                    currentPerformance.publicanName
+                )
+            end
+            tes3.messageBox{
+                message = message,
                 buttons = { "Okay" }
             }
+            journal.completedGig(tipsTotal)
             common.data.songPlaying.timesPlayed = common.data.songPlaying.timesPlayed + 1
         end
         common.data.songPlaying = nil
@@ -88,7 +98,7 @@ end
 --Perform at a tavern, earn gold
 function Song:perform()
     animate.play()
-    tips.start()
+    tips:start()
     common.data.currentSongDifficulty = self.difficulty
 
     for _, songData in ipairs(common.data.knownSongs) do

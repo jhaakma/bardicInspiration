@@ -2,6 +2,8 @@ local common = require("mer.bardicInspiration.common")
 local reward = require("mer.bardicInspiration.controllers.rewardController")
 local performances = require("mer.bardicInspiration.data.performances")
 local messages = require("mer.bardicInspiration.messages.messages")
+local Publican = require("mer.bardicInspiration.data.publican")
+local journal = require("mer.bardicInspiration.controllers.journalController")
 --Configs--------------------------------------------------------
 local STATE = performances.STATE
 local infos = common.staticData.dialogueEntries
@@ -19,49 +21,56 @@ local infos = common.staticData.dialogueEntries
 -- end
 -- event.register("infoGetText", infoGetReward, {filter = tes3.getDialogueInfo(infos.hasPlayed) })
 
+
+
+
+
+---@param e infoGetTextEventData
 local function infoGetReward(e)
-    if e.passes ~= false then
-        common.log:trace("---infoGetReward - reward and reset")
-        local thisPerformance = performances.getCurrent()
-        if not thisPerformance then return end
-        local amount = thisPerformance.reward
-        reward.give(amount)
-        reward.raiseDisposition{ actorId = thisPerformance.publicanId, rewardAmount = amount }
-        performances.clearCurrent()
-    end
+    common.log:trace("---infoGetReward - reward and reset")
+    local thisPerformance = performances.getCurrent()
+    if not thisPerformance then return end
+    local amount = thisPerformance.reward
+    reward.give(amount)
+    reward.raiseDisposition{ actorId = thisPerformance.publicanId, rewardAmount = amount }
+    performances.clearCurrent()
+    journal.gotPaid(amount)
 end
 event.register("infoGetText", infoGetReward, {filter = tes3.getDialogueInfo(infos.hasPlayed) })
 
 
-local currentPublican
+---@param e infoGetTextEventData
 local function showDoAccept(e)--Schedule a performance
-    if e.passes ~= false then
-        common.log:trace("passes, setting performance data")
-        performances.add{
-            day = tes3.worldController.daysPassed.value,
-            state = STATE.SCHEDULED,
-            reward = reward.get(),
-            publicanId = currentPublican.id,
-            publicanName = currentPublican.name,
-        }
+    local currentPublican = Publican.get()
+    if not currentPublican then
+        common.log:warn("No current publican, blocking")
+        return
     end
+
+    common.log:trace("passes, setting performance data")
+    performances.add{
+        day = tes3.worldController.daysPassed.value,
+        state = STATE.SCHEDULED,
+        reward = reward.get(),
+        publicanId = currentPublican.object.id,
+        publicanName = currentPublican.object.name,
+    }
+    journal.scheduleGig()
 end
 event.register("infoGetText", showDoAccept, { filter = tes3.getDialogueInfo(infos.doAccept) } )
 
 local function showNoSongs(e)
-    if e.passes ~= false then
-        common.log:debug("---showNoSongs")
-        -- If there is a bard in the cell, the publican will point them out to you.
-        for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
-            common.log:debug("ref: %s", ref.id)
-            common.log:debug("ref class: %s", ref.object.class)
-            if common.isBard(ref) and not ref.disabled then
-                common.log:debug("found bard")
-                local message = ref.object.female
-                    and messages.dialog_NoSongsBardFemale
-                    or messages.dialog_NoSongsBardMale
-                e.text = string.format(message, ref.object.name)
-            end
+    common.log:debug("---showNoSongs")
+    -- If there is a bard in the cell, the publican will point them out to you.
+    for ref in tes3.player.cell:iterateReferences(tes3.objectType.npc) do
+        common.log:debug("ref: %s", ref.id)
+        common.log:debug("ref class: %s", ref.object.class)
+        if common.isBard(ref) and not ref.disabled then
+            common.log:debug("found bard")
+            local message = ref.object.female
+                and messages.dialog_NoSongsBardFemale
+                or messages.dialog_NoSongsBardMale
+            e.text = string.format(message, ref.object.name)
         end
     end
 end
@@ -124,7 +133,7 @@ local function filterDescribeGig(e)
     end
 
     reward.calculate(e.reference.object)
-    currentPublican = e.reference.object
+    Publican.set(e.reference)
 end
 event.register("infoFilter", filterDescribeGig, { filter = tes3.getDialogueInfo(infos.describeGig)})
 

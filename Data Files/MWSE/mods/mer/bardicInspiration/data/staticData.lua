@@ -78,8 +78,8 @@ local staticData = {
     baseTip = 5,
     maxSkillTipEffect = 4.0,
     --Tip interval configs
-    maxTipInterval = 30,
-    baseTipInterval = 20, --seconds
+    maxTipInterval = 25,
+    baseTipInterval = 10, --seconds
     maxLuckTipIntervalEffect = 0.10,--multiplier
     maxSkillTipIntervalEffect = 0.5,--multiplier
     --Disposition increase configs
