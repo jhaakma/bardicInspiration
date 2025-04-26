@@ -27,5 +27,22 @@ local function initialized()
 end
 event.register("initialized", initialized)
 
+local DialogEnvironment = require("mer.bardicInspiration.dialog.DialogEnvironment")
+event.register(tes3.event.dialogueEnvironmentCreated, function(e)
+    ---@class mwseDialogueEnvironment
+    local env = e.environment
+    env.BardicInspiration = DialogEnvironment
+end)
+
 --MCM
 require("mer.bardicInspiration.mcm")
+
+local TagManager = include("CraftingFramework.components.TagManager")
+if TagManager then
+    TagManager.addIds{
+        tag = "innkeeper",
+        ids = {
+            "phane rielle"
+        }
+    }
+end

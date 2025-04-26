@@ -25,6 +25,8 @@ local messages = {
     playingSong = "Playing \"%s\".",
     learnedSong = "You learned \"%s\"!",
 
+    stopPlaying = "End your performance early?",
+
     ---Keep the [[ ]] and don't add indentation!
     songTooltip =
     [[Difficulty: %s

@@ -100,3 +100,31 @@ local function onReadyLute(e)
 end
 
 event.register("weaponReadied", onReadyLute)
+
+--[[
+While performing at a tavern, if player presses "Activate" key,
+ask if they want to stop playing
+]]
+event.register("keyDown", function(e)
+    local activatePressed = e.keyCode == tes3.getInputBinding(tes3.keybind.activate).code
+    if not activatePressed then return end
+
+    local isPlaying = common.data.songPlaying ~= nil
+    if not isPlaying then return end
+    common.log:debug("Player is playing, showing message")
+
+    tes3ui.showMessageMenu{
+        message = messages.stopPlaying,
+        buttons = {
+            {
+                text = tes3.findGMST(tes3.gmst.sYes).value,
+                callback = function()
+                    common.log:debug("Stopping performance")
+                    event.trigger("BardicInspiration:EndPerformance")
+                end,
+            }
+        },
+        cancels = true,
+    }
+
+end)

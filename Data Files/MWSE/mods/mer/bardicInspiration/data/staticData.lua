@@ -118,6 +118,11 @@ local staticData = {
             id = "1921131585645619076",
             classFilter = "publican"
         },
+        innkeeperGivesLute = {
+            dialogue = "give a performance",
+            id = "1979987563041210597",
+            classFilter = "publican",
+        },
         noLute = {
             dialogue = "give a performance",
             id = "11347136332025822472",

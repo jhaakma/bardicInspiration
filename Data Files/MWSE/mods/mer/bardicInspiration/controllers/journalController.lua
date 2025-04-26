@@ -1,6 +1,6 @@
 local common = require("mer.bardicInspiration.common")
 local messages = require("mer.bardicInspiration.messages.messages")
-local Publican = require("mer.bardicInspiration.data.publican")
+local Performances = require("mer.bardicInspiration.data.performances")
 ---@class BardicInspiration.JournalController
 local Journal = {}
 
@@ -17,7 +17,13 @@ end
 
 
 function Journal.completedGig(tipsAmount)
-    local currentPublican = Publican.get()
+    local currentPerformance = Performances.getCurrent()
+    if not currentPerformance then
+        common.log:warn("No current performance, blocking")
+        return
+    end
+    local currentPublican = tes3.getReference(currentPerformance.publicanId)
+
     if not currentPublican then
         common.log:warn("No current publican, blocking")
         return
@@ -32,7 +38,13 @@ function Journal.completedGig(tipsAmount)
 end
 
 function Journal.gotPaid(amount)
-    local currentPublican = Publican.get()
+    local currentPerformance = Performances.getCurrent()
+    if not currentPerformance then
+        common.log:warn("No current performance, blocking")
+        return
+    end
+    local currentPublican = tes3.getReference(currentPerformance.publicanId)
+
     if not currentPublican then
         common.log:warn("No current publican, blocking")
         return
@@ -47,7 +59,13 @@ end
 
 
 function Journal.scheduleGig()
-    local currentPublican = Publican.get()
+    local currentPerformance = Performances.getCurrent()
+    if not currentPerformance then
+        common.log:warn("No current performance, blocking")
+        return
+    end
+    local currentPublican = tes3.getReference(currentPerformance.publicanId)
+
     if not currentPublican then
         common.log:warn("No current publican, blocking")
         return

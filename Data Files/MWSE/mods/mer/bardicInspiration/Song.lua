@@ -113,6 +113,7 @@ function Song:perform()
     --Ends performance when the song ends (and another track is selected):
 
     event.register("musicChangeTrack", endPerformance, { priority = 1000 })
+    event.register("BardicInspiration:EndPerformance", endPerformance)
     event.register("equip", blockEquip, { priority = 1000 } )
 end
 

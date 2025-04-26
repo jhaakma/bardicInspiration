@@ -68,6 +68,15 @@ this.log = require("logging.logger").new{
     logLevel = logLevel
 }
 
+function this.hasGivenLute()
+    return this.data.hasGivenLute == true
+end
+
+function this.setHasGivenLute(state)
+    this.data.hasGivenLute = state
+end
+
+
 function this.isLute(item, itemData)
     if item then
         if this.staticData.lutes[item.id] then
@@ -83,6 +92,34 @@ function this.isLute(item, itemData)
     end
 
     return false
+end
+
+---@param publicanRef tes3reference
+---@return tes3reference|nil
+function this.getOwnedLuteInCell(publicanRef)
+    local lutes = {}
+    for ref in publicanRef.cell:iterateReferences(tes3.objectType.weapon) do
+        if this.isLute(ref.object) then
+            local owner = tes3.getOwner{reference = ref}
+            if owner ~= nil and owner.id:lower() == publicanRef.baseObject.id:lower() then
+                table.insert(lutes, ref)
+            end
+        end
+    end
+
+    --return the lute closest to the publican
+    if #lutes > 0 then
+        local closestLute = lutes[1]
+        local closestDistance = publicanRef.position:distance(closestLute.position)
+        for _, lute in ipairs(lutes) do
+            local distance = publicanRef.position:distance(lute.position)
+            if distance < closestDistance then
+                closestDistance = distance
+                closestLute = lute
+            end
+        end
+        return closestLute
+    end
 end
 
 function this.isInnkeeper(ref)

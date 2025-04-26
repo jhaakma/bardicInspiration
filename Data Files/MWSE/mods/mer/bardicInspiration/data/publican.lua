@@ -1,3 +1,4 @@
+local common = require("mer.bardicInspiration.common")
 
 ---@class BardicInspiration.Publican
 local Publican = {}
@@ -21,5 +22,6 @@ function Publican.get()
         return ref
     end
 end
+
 
 return Publican

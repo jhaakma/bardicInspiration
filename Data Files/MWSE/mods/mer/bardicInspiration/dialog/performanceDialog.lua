@@ -33,8 +33,8 @@ local function infoGetReward(e)
     local amount = thisPerformance.reward
     reward.give(amount)
     reward.raiseDisposition{ actorId = thisPerformance.publicanId, rewardAmount = amount }
-    performances.clearCurrent()
     journal.gotPaid(amount)
+    performances.clearCurrent()
 end
 event.register("infoGetText", infoGetReward, {filter = tes3.getDialogueInfo(infos.hasPlayed) })
 
@@ -166,10 +166,13 @@ local function filterTooLate(e)
 end
 event.register("infoFilter", filterTooLate, { filter = tes3.getDialogueInfo(infos.tooLate)})
 
+
+
 local function filterNoLute(e)
     common.log:trace("---filterNoLute")
 
     if not common.isInnkeeper(e.reference) then
+        common.log:trace("Not an innkeeper, blocking")
         e.passes = false
     end
 
@@ -180,6 +183,30 @@ local function filterNoLute(e)
 end
 event.register("infoFilter", filterNoLute, { filter = tes3.getDialogueInfo(infos.noLute)})
 
+local function filterGiveLute(e)
+    common.log:trace("---filterGiveLute")
+
+    if common.hasGivenLute() then
+        common.log:trace("Already given lute, blocking")
+        e.passes = false
+    end
+
+    if not common.isInnkeeper(e.reference) then
+        common.log:trace("Not an innkeeper, blocking")
+        e.passes = false
+    end
+
+    if not common.getOwnedLuteInCell(e.reference) then
+        common.log:trace("Publican doesn't have owned lute, blocking")
+        e.passes = false
+    end
+
+    if common.hasLute() then
+        common.log:trace("Player already has lute, blocking")
+        e.passes = false
+    end
+end
+event.register("infoFilter", filterGiveLute, { filter = tes3.getDialogueInfo(infos.innkeeperGivesLute)})
 
 local function filterNoSongs(e)
     common.log:trace("---filterNoSongs")
