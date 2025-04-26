@@ -2,6 +2,16 @@
 local Song = require("mer.bardicInspiration.Song")
 local messages = require("mer.bardicInspiration.messages.messages")
 
+
+---@class BardicInspiration.SongData
+---@field name string
+---@field path string
+---@field difficulty string
+
+---@class BardicInspiration.SongList
+---@field beginner BardicInspiration.SongData[]
+---@field intermediate BardicInspiration.SongData[]
+---@field advanced BardicInspiration.SongData[]
 local songList = {
     beginner = {
         {

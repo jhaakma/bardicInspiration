@@ -57,7 +57,8 @@ local function addSongsToBard(bard)
     common.log:debug("Adding songs to %s", bard.object.name)
     local data = bard.data.mer_bardicInspiration
     for difficulty, diffConf in pairs(common.staticData.difficulties) do
-        local shuffledSongs = common.shuffle(table.copy(songList[difficulty]))
+        local shuffledSongs = table.copy(songList[difficulty])
+        table.shuffle(shuffledSongs)
         for _ = 1, diffConf.songsPerBard do
             if #shuffledSongs > 0 then
                 local song = table.remove(shuffledSongs)
@@ -141,6 +142,8 @@ local function getSongFromBard(bard)
         --sort from most to least difficult
         songController.sortSongListByDifficulty{list = bardData.songs, reverse = true}
         local currentSong
+
+        table.shuffle(bardData.songs)
         for _, song in ipairs(bardData.songs) do
             if canLearnSong(song) then
                 common.log:debug("Bard will now teach %s", song.name)

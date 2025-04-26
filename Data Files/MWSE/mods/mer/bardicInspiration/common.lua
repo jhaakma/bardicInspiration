@@ -31,10 +31,11 @@ end
 --initialise player data
 local function initPlayerData()
     tes3.player.data.mer_bardicInspiration = tes3.player.data.mer_bardicInspiration or {}
-    for k, v in pairs(this.staticData.initPlayerData) do
+    for k, v in pairs(table.deepcopy(this.staticData.initPlayerData)) do
         tes3.player.data.mer_bardicInspiration[k] = tes3.player.data.mer_bardicInspiration[k] or v
     end
 end
+
 do
     this.data = setmetatable({}, {
         __index = function(_, key)
@@ -139,12 +140,14 @@ function this.isBard(ref)
     return false
 end
 
-function this.shuffle(tbl)
-    for i = #tbl, 2, -1 do
+function this.shuffle(t)
+    local s = {}
+    for i = 1, #t do s[i] = t[i] end
+    for i = #t, 2, -1 do
         local j = math.random(i)
-        tbl[i], tbl[j] = tbl[j], tbl[i]
+        s[i], s[j] = s[j], s[i]
     end
-    return tbl
+    return s
 end
 
 local function setControlsDisabled(state)
