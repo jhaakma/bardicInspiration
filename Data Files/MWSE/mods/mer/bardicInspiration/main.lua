@@ -16,6 +16,8 @@ local function initialized()
         require("mer.bardicInspiration.controllers.merchantController")
         --Checks when the player readies a lute and triggers performances
         require("mer.bardicInspiration.controllers.lutePlayController")
+        --Manage equiped lute global
+        require("mer.bardicInspiration.controllers.globalController")
         --Manage performance skill
         require("mer.bardicInspiration.controllers.skillController")
         require("mer.bardicInspiration.controllers.experienceController")

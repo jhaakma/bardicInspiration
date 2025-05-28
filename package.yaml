@@ -1,0 +1,16 @@
+mod_name: BardicInspiration'
+data_files:
+  - BardicInspiration.esp
+  - Icons/mer_bard
+  - Meshes/mer_bard
+  - Music/mer_bard
+  - MWSE/mods/mer/bardicInspiration
+  - BardicInspiration-metadata.toml
+metadata_path: Data Files/BardicInspiration-metadata.toml
+repo_path: F:/Games/_RELEASES/BardicInspiration/master
+archive_path: F:/Games/_RELEASES/BardicInspiration/BardicInspiration.7z
+morrowind_path: C:/games/Morrowind installs/vanilla+/Morrowind
+timestamps:
+  -
+    path: BardicInspiration.esp
+    timestamp: 1116895460
