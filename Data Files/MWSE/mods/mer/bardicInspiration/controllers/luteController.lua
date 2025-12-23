@@ -197,3 +197,34 @@ end
 
 event.register(tes3.event.menuEnter, swapLutesInInventory)
 event.register(tes3.event.menuExit, swapLutesInInventory)
+
+
+local function getChildIndexByName(collection, name)
+	for i, child in ipairs(collection) do
+		if (child and child.name and child.name:lower() == name:lower()) then
+			return i - 1
+		end
+	end
+end
+
+local function translateFloorLute(ref)
+    local switchNode = ref.sceneNode:getObjectByName("SWITCH_LUTE")
+    if switchNode then
+        local groundIndex = getChildIndexByName(switchNode.children, "SWITCH_GROUND")
+        switchNode.switchIndex = groundIndex
+    end
+end
+
+--[[
+    Check for a vanilla lute placed in the world and switch it
+]]
+local function positionPlacedLute(e)
+    if e.reference then
+        local id = e.reference.baseObject.id:lower()
+        if  common.staticData.lutes[id] then
+            common.log:debug("Switching to floor lute switch node")
+            translateFloorLute(e.reference)
+        end
+    end
+end
+event.register("referenceActivated", positionPlacedLute)
