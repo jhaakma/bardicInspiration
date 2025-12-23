@@ -5,7 +5,7 @@ local staticData = {
     --Merchant Data
     merchantContainerId = "mer_BI_merch_cntr",
     containerContents = {
-        { item = "mer_lute", count = 1},
+        { item = "misc_de_lute_01", count = 1},
     },
 
     --Lute id mapping

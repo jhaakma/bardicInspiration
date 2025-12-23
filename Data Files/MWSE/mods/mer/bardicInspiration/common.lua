@@ -80,9 +80,14 @@ end
 
 function this.isLute(item, itemData)
     if item then
-        if this.staticData.lutes[item.id] then
+        local lowerId = item.id:lower()
+        if this.staticData.lutes[lowerId] then
             return true
         end
+        if this.staticData.idMapping[lowerId] then
+            return true
+        end
+
         --Check "Constistent Enchanting" stored ID
         if itemData and itemData.data then
             this.log:debug("Found itemData when checking lute")
@@ -99,7 +104,7 @@ end
 ---@return tes3reference|nil
 function this.getOwnedLuteInCell(publicanRef)
     local lutes = {}
-    for ref in publicanRef.cell:iterateReferences(tes3.objectType.weapon) do
+    for ref in publicanRef.cell:iterateReferences() do
         if this.isLute(ref.object) then
             local owner = tes3.getOwner{reference = ref}
             if owner ~= nil and owner.id:lower() == publicanRef.baseObject.id:lower() then
@@ -171,6 +176,11 @@ function this.hasLute()
             return true
         end
     end
+    for id in pairs(this.staticData.idMapping) do
+        if tes3.player.object.inventory:contains(id) then
+            return true
+        end
+    end
     return false
 end
 
@@ -227,7 +237,7 @@ function this.fadeTimeOut(e)
             iterations = iterations,
             duration = (e.secondsTaken / iterations),
             callback = (function()
-                local gameHour = tes3.findGlobal('gameHour')
+                local gameHour = tes3.findGlobal('gameHour') --[[@as tes3globalVariable]]
                 gameHour.value = gameHour.value + (e.hoursPassed / iterations)
             end)
         }
